@@ -1,0 +1,38 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.getSidebar",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Channels the viewer can see, grouped into sections, with unread counts.",
+      "parameters": {
+        "type": "params",
+        "required": [],
+        "properties": {}
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "sections",
+            "cursor"
+          ],
+          "properties": {
+            "sections": {
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "dev.atmoboard.defs#sectionView"
+              }
+            },
+            "cursor": {
+              "type": "string",
+              "description": "Change cursor for getChanges."
+            }
+          }
+        }
+      }
+    }
+  }
+}

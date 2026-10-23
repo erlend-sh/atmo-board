@@ -1,0 +1,82 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.createPost",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Post into a thread. Posting into a channel is untitled chat.",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "thread",
+            "textContent"
+          ],
+          "properties": {
+            "thread": {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 10,
+              "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+            },
+            "replyTo": {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 10,
+              "description": "Key of the post being answered."
+            },
+            "textContent": {
+              "type": "string",
+              "maxLength": 100000,
+              "maxGraphemes": 10000
+            },
+            "content": {
+              "type": "union",
+              "refs": [
+                "dev.atmoboard.defs#markdown"
+              ]
+            }
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "key",
+            "uri",
+            "number"
+          ],
+          "properties": {
+            "key": {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 10,
+              "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+            },
+            "uri": {
+              "type": "string",
+              "format": "at-uri"
+            },
+            "number": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "errors": [
+        {
+          "name": "Forbidden"
+        },
+        {
+          "name": "NotFound"
+        },
+        {
+          "name": "Locked"
+        }
+      ]
+    }
+  }
+}

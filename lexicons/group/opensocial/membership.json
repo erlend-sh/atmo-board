@@ -1,0 +1,37 @@
+{
+  "lexicon": 1,
+  "id": "group.opensocial.membership",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "Vendored draft. Grants a member their roles, in members. The rkey is the member DID.",
+      "key": "any",
+      "record": {
+        "type": "object",
+        "required": [
+          "member",
+          "roles",
+          "createdAt"
+        ],
+        "properties": {
+          "member": {
+            "type": "string",
+            "format": "did"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "record-key"
+            },
+            "maxLength": 100
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime"
+          }
+        }
+      }
+    }
+  }
+}

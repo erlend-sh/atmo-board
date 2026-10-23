@@ -1,0 +1,48 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.channel",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "A sidebar entry that promotes a thread to a channel. Written only by the group. Deleting it demotes the thread.",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": [
+          "thread",
+          "position",
+          "createdAt"
+        ],
+        "properties": {
+          "thread": {
+            "type": "string",
+            "format": "at-uri"
+          },
+          "section": {
+            "type": "string",
+            "maxLength": 640,
+            "maxGraphemes": 64
+          },
+          "position": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "icon": {
+            "type": "string",
+            "maxLength": 64,
+            "maxGraphemes": 1
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 3000,
+            "maxGraphemes": 300
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,39 @@
+# Local demo stack: Postgres and HappyView. The web app runs on the host with
+# `bun run dev`. appview/demo.sh brings this up, configures it and seeds it.
+services:
+  postgres:
+    image: postgres:17
+    # HappyView's main and backfill pools can exceed the default 100 connections.
+    command: ["postgres", "-c", "max_connections=200"]
+    environment:
+      POSTGRES_USER: happyview
+      POSTGRES_PASSWORD: happyview
+      POSTGRES_DB: happyview
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U happyview"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  happyview:
+    # Pinned: setup.sh and the Lua scripts target this release's spaces API.
+    image: ghcr.io/gamesgamesgamesgamesgames/happyview:2.16.0
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      DATABASE_URL: postgres://happyview:happyview@postgres/happyview
+      PUBLIC_URL: http://127.0.0.1:3000
+      SESSION_SECRET: ${HAPPYVIEW_SESSION_SECRET:?run appview/demo.sh, which writes .env}
+      TOKEN_ENCRYPTION_KEY: ${TOKEN_ENCRYPTION_KEY:?run appview/demo.sh, which writes .env}
+      RELAY_URL: https://relay1.us-east.bsky.network
+      PORT: 3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:

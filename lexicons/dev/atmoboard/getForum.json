@@ -1,0 +1,35 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.getForum",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "The forum's profile, rules, and what the viewer may do.",
+      "parameters": {
+        "type": "params",
+        "required": [],
+        "properties": {}
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "forum",
+            "viewer"
+          ],
+          "properties": {
+            "forum": {
+              "type": "ref",
+              "ref": "dev.atmoboard.defs#forumView"
+            },
+            "viewer": {
+              "type": "ref",
+              "ref": "dev.atmoboard.defs#viewerState"
+            }
+          }
+        }
+      }
+    }
+  }
+}

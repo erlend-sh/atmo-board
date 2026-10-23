@@ -1,0 +1,472 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.defs",
+  "description": "Shared definitions and API views for atmo-board.",
+  "defs": {
+    "markdown": {
+      "type": "object",
+      "required": [
+        "text"
+      ],
+      "properties": {
+        "text": {
+          "type": "string",
+          "maxLength": 100000,
+          "maxGraphemes": 10000,
+          "description": "CommonMark source."
+        }
+      },
+      "description": "Post body as Markdown."
+    },
+    "permissions": {
+      "type": "object",
+      "required": [
+        "see",
+        "reply",
+        "create"
+      ],
+      "properties": {
+        "see": {
+          "type": "boolean"
+        },
+        "reply": {
+          "type": "boolean"
+        },
+        "create": {
+          "type": "boolean"
+        },
+        "moderate": {
+          "type": "boolean"
+        },
+        "admin": {
+          "type": "boolean"
+        }
+      },
+      "description": "What the viewer may do in one channel: Discourse's See / Reply / Create, plus staff powers."
+    },
+    "forumView": {
+      "type": "object",
+      "required": [
+        "did",
+        "name",
+        "joinPolicy"
+      ],
+      "properties": {
+        "did": {
+          "type": "string",
+          "format": "did"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "joinPolicy": {
+          "type": "string",
+          "knownValues": [
+            "open",
+            "approval",
+            "invite"
+          ]
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "uri",
+              "text"
+            ],
+            "properties": {
+              "uri": {
+                "type": "string",
+                "format": "at-uri"
+              },
+              "text": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "viewerState": {
+      "type": "object",
+      "required": [
+        "member",
+        "roles"
+      ],
+      "properties": {
+        "did": {
+          "type": "string",
+          "format": "did"
+        },
+        "handle": {
+          "type": "string"
+        },
+        "member": {
+          "type": "boolean"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "trustLevel": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4
+        },
+        "permissions": {
+          "type": "ref",
+          "ref": "#permissions"
+        }
+      }
+    },
+    "authorView": {
+      "type": "object",
+      "required": [
+        "did"
+      ],
+      "properties": {
+        "did": {
+          "type": "string",
+          "format": "did"
+        },
+        "handle": {
+          "type": "string"
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "avatar": {
+          "type": "string",
+          "format": "uri"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "trustLevel": {
+          "type": "integer"
+        }
+      }
+    },
+    "threadState": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "locked": {
+          "type": "boolean"
+        },
+        "resolved": {
+          "type": "boolean"
+        },
+        "pinned": {
+          "type": "boolean"
+        },
+        "hidden": {
+          "type": "boolean"
+        }
+      }
+    },
+    "channelView": {
+      "type": "object",
+      "required": [
+        "key",
+        "uri",
+        "slug",
+        "title",
+        "position"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+        },
+        "uri": {
+          "type": "string",
+          "format": "at-uri"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string",
+          "maxGraphemes": 1
+        },
+        "section": {
+          "type": "string"
+        },
+        "position": {
+          "type": "integer"
+        },
+        "private": {
+          "type": "boolean"
+        },
+        "threadCount": {
+          "type": "integer"
+        },
+        "postCount": {
+          "type": "integer"
+        },
+        "lastActivityAt": {
+          "type": "string",
+          "format": "datetime"
+        },
+        "unreadCount": {
+          "type": "integer"
+        }
+      }
+    },
+    "sectionView": {
+      "type": "object",
+      "required": [
+        "name",
+        "channels"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "channels": {
+          "type": "array",
+          "items": {
+            "type": "ref",
+            "ref": "#channelView"
+          }
+        }
+      }
+    },
+    "threadView": {
+      "type": "object",
+      "required": [
+        "key",
+        "uri",
+        "slug",
+        "author",
+        "postCount",
+        "createdAt",
+        "lastActivityAt",
+        "state"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+        },
+        "uri": {
+          "type": "string",
+          "format": "at-uri"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "parent": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+        },
+        "isChannel": {
+          "type": "boolean"
+        },
+        "author": {
+          "type": "ref",
+          "ref": "#authorView"
+        },
+        "textContent": {
+          "type": "string"
+        },
+        "content": {
+          "type": "union",
+          "refs": [
+            "#markdown"
+          ]
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "postCount": {
+          "type": "integer"
+        },
+        "participants": {
+          "type": "array",
+          "items": {
+            "type": "ref",
+            "ref": "#authorView"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "datetime"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "datetime"
+        },
+        "lastActivityAt": {
+          "type": "string",
+          "format": "datetime"
+        },
+        "state": {
+          "type": "ref",
+          "ref": "#threadState"
+        },
+        "lastReadNumber": {
+          "type": "integer"
+        }
+      }
+    },
+    "reactionSummary": {
+      "type": "object",
+      "required": [
+        "emoji",
+        "count"
+      ],
+      "properties": {
+        "emoji": {
+          "type": "string",
+          "maxGraphemes": 1
+        },
+        "count": {
+          "type": "integer"
+        },
+        "viewer": {
+          "type": "boolean"
+        }
+      }
+    },
+    "postView": {
+      "type": "object",
+      "required": [
+        "key",
+        "uri",
+        "number",
+        "thread",
+        "author",
+        "textContent",
+        "createdAt"
+      ],
+      "properties": {
+        "key": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+        },
+        "uri": {
+          "type": "string",
+          "format": "at-uri"
+        },
+        "number": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "thread": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+        },
+        "author": {
+          "type": "ref",
+          "ref": "#authorView"
+        },
+        "textContent": {
+          "type": "string"
+        },
+        "content": {
+          "type": "union",
+          "refs": [
+            "#markdown"
+          ]
+        },
+        "replyTo": {
+          "type": "integer",
+          "description": "Post number this post answers."
+        },
+        "reactions": {
+          "type": "array",
+          "items": {
+            "type": "ref",
+            "ref": "#reactionSummary"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "datetime"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "datetime"
+        },
+        "hidden": {
+          "type": "boolean"
+        }
+      }
+    },
+    "change": {
+      "type": "object",
+      "required": [
+        "seq",
+        "kind",
+        "key"
+      ],
+      "properties": {
+        "seq": {
+          "type": "integer"
+        },
+        "kind": {
+          "type": "string",
+          "knownValues": [
+            "thread",
+            "post",
+            "channel",
+            "member",
+            "reaction",
+            "override"
+          ]
+        },
+        "key": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+        },
+        "thread": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+        },
+        "parent": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+        }
+      }
+    }
+  }
+}

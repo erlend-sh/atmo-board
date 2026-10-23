@@ -1,0 +1,81 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.override",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "A curation or moderation decision the group applies on top of authors' records. Written only by the group; actor names the staff member.",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": [
+          "subject",
+          "action",
+          "createdAt"
+        ],
+        "properties": {
+          "subject": {
+            "type": "string",
+            "description": "The at-uri of the thread or post, or the DID of an account."
+          },
+          "action": {
+            "type": "string",
+            "knownValues": [
+              "move",
+              "rename",
+              "hide",
+              "unhide",
+              "lock",
+              "unlock",
+              "resolve",
+              "unresolve",
+              "pin",
+              "unpin",
+              "setTrustLevel"
+            ]
+          },
+          "toThread": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "For move: the new parent thread."
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 3000,
+            "maxGraphemes": 300,
+            "description": "For rename."
+          },
+          "level": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 4,
+            "description": "For setTrustLevel."
+          },
+          "locked": {
+            "type": "boolean",
+            "description": "For setTrustLevel: pin the level so automatic promotion and demotion skip it."
+          },
+          "until": {
+            "type": "string",
+            "format": "datetime",
+            "description": "For pin: when the pin lapses."
+          },
+          "actor": {
+            "type": "string",
+            "format": "did"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 10000,
+            "maxGraphemes": 1000
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime"
+          }
+        }
+      }
+    }
+  }
+}

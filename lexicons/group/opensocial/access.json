@@ -1,0 +1,46 @@
+{
+  "lexicon": 1,
+  "id": "group.opensocial.access",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "Vendored draft. Who can access this space; grants apply only here.",
+      "key": "literal:self",
+      "record": {
+        "type": "object",
+        "required": [
+          "grants"
+        ],
+        "properties": {
+          "public": {
+            "type": "boolean",
+            "default": false
+          },
+          "grants": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "role",
+                "scopes"
+              ],
+              "properties": {
+                "role": {
+                  "type": "string",
+                  "format": "record-key"
+                },
+                "scopes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "maxLength": 100
+          }
+        }
+      }
+    }
+  }
+}

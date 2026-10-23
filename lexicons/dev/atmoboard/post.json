@@ -1,0 +1,49 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.post",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "A post in a thread: a chat message or a forum reply alike. Lives in the thread's space, written by its author. Field names follow garden.msg.post.",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": [
+          "thread",
+          "textContent",
+          "createdAt"
+        ],
+        "properties": {
+          "thread": {
+            "type": "string",
+            "format": "at-uri"
+          },
+          "replyTo": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "The post this one answers, if any."
+          },
+          "textContent": {
+            "type": "string",
+            "maxLength": 100000,
+            "maxGraphemes": 10000
+          },
+          "content": {
+            "type": "union",
+            "refs": [
+              "dev.atmoboard.defs#markdown"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "datetime"
+          }
+        }
+      }
+    }
+  }
+}
