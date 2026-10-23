@@ -1,0 +1,72 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.admin.initForum",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Create the group's spaces and profile and make the caller's actor its first admin. Callable only by the group account; idempotent.",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "name",
+            "admin"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "maxLength": 640,
+              "maxGraphemes": 64
+            },
+            "description": {
+              "type": "string",
+              "maxLength": 20000,
+              "maxGraphemes": 2000
+            },
+            "joinPolicy": {
+              "type": "string",
+              "knownValues": [
+                "open",
+                "approval",
+                "invite"
+              ],
+              "default": "open"
+            },
+            "admin": {
+              "type": "string",
+              "format": "did"
+            },
+            "adminHandle": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "did",
+            "spaces"
+          ],
+          "properties": {
+            "did": {
+              "type": "string",
+              "format": "did"
+            },
+            "spaces": {
+              "type": "unknown"
+            }
+          }
+        }
+      },
+      "errors": [
+        {
+          "name": "Forbidden"
+        }
+      ]
+    }
+  }
+}

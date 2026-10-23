@@ -1,0 +1,61 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.getChanges",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Change hints since a cursor, for slow realtime: poll while the tab is visible and refetch what changed.",
+      "parameters": {
+        "type": "params",
+        "required": [
+          "since"
+        ],
+        "properties": {
+          "since": {
+            "type": "string"
+          },
+          "thread": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 10,
+            "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+          },
+          "parent": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 10,
+            "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "default": 100
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "changes",
+            "cursor"
+          ],
+          "properties": {
+            "changes": {
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "dev.atmoboard.defs#change"
+              }
+            },
+            "cursor": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

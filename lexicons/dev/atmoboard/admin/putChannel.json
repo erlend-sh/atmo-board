@@ -1,0 +1,91 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.admin.putChannel",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Promote a thread to a channel, or create a new channel thread when no thread is given. Group account only, on behalf of an admin actor.",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "actor",
+            "title"
+          ],
+          "properties": {
+            "actor": {
+              "type": "string",
+              "format": "did"
+            },
+            "thread": {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 10,
+              "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 3000,
+              "maxGraphemes": 300
+            },
+            "description": {
+              "type": "string",
+              "maxLength": 3000,
+              "maxGraphemes": 300
+            },
+            "icon": {
+              "type": "string",
+              "maxLength": 64,
+              "maxGraphemes": 1
+            },
+            "section": {
+              "type": "string",
+              "maxLength": 640,
+              "maxGraphemes": 64
+            },
+            "position": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "key",
+            "uri",
+            "slug"
+          ],
+          "properties": {
+            "key": {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 10,
+              "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+            },
+            "uri": {
+              "type": "string",
+              "format": "at-uri"
+            },
+            "slug": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "errors": [
+        {
+          "name": "Forbidden"
+        },
+        {
+          "name": "NotFound"
+        }
+      ]
+    }
+  }
+}

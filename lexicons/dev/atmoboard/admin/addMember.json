@@ -1,0 +1,74 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.admin.addMember",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Admit a member: write their group.opensocial.membership and grant them write access to the forum's spaces. Group account only.",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "member"
+          ],
+          "properties": {
+            "member": {
+              "type": "string",
+              "format": "did"
+            },
+            "roles": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "actor": {
+              "type": "string",
+              "format": "did"
+            },
+            "handle": {
+              "type": "string"
+            },
+            "displayName": {
+              "type": "string",
+              "maxLength": 640,
+              "maxGraphemes": 64
+            },
+            "avatar": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "member",
+            "roles"
+          ],
+          "properties": {
+            "member": {
+              "type": "string",
+              "format": "did"
+            },
+            "roles": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "errors": [
+        {
+          "name": "Forbidden"
+        }
+      ]
+    }
+  }
+}

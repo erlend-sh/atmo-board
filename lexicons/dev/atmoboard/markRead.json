@@ -1,0 +1,58 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.markRead",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Record how far the viewer has read a thread. Private appview state; never written to a repo.",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "thread",
+            "number"
+          ],
+          "properties": {
+            "thread": {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 10,
+              "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+            },
+            "number": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "thread",
+            "lastRead"
+          ],
+          "properties": {
+            "thread": {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 10,
+              "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+            },
+            "lastRead": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "errors": [
+        {
+          "name": "NotFound"
+        }
+      ]
+    }
+  }
+}

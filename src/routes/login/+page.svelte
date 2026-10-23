@@ -1,0 +1,49 @@
+<script lang="ts">
+  import Avatar from '$lib/components/Avatar.svelte';
+  import { displayName } from '$lib/names';
+  let { data, form } = $props();
+</script>
+
+<svelte:head><title>Sign in · {data.forum.name}</title></svelte:head>
+
+<div class="page narrow">
+  <h1>Sign in to {data.forum.name}</h1>
+  {#if data.devLogin}
+    <p class="muted">Local demo mode: there's no PDS, so pick who you want to be.</p>
+    <form method="POST" action="?/member" class="members">
+      {#each data.members as m (m.did)}
+        <button name="did" value={m.did} class="member">
+          <Avatar author={m} size={32} />
+          <span class="who"><b>{displayName(m)}</b><span>@{m.handle ?? m.did}</span></span>
+          {#if m.roles.includes('admin')}<span class="role">admin</span>{:else if m.roles.includes('moderator')}<span class="role">mod</span>{/if}
+        </button>
+      {/each}
+    </form>
+    <h2>Or arrive as a newcomer</h2>
+    <form method="POST" action="?/newcomer" class="newcomer">
+      <input name="name" placeholder="name, e.g. carol" required autocomplete="off" />
+      <button class="btn primary">Continue</button>
+    </form>
+    {#if form?.message}<p class="error">{form.message}</p>{/if}
+  {:else}
+    <p class="muted">Sign-in with your atproto account (Bluesky or any PDS) is coming in the next milestone.</p>
+  {/if}
+</div>
+
+<style>
+  .narrow { max-width: 520px; }
+  h1 { font-size: 24px; margin-bottom: 8px; }
+  h2 { font-size: 16px; margin: 28px 0 10px; }
+  .muted { color: var(--muted); }
+  .members { display: grid; gap: 6px; margin-top: 16px; }
+  .member { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius);
+    border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; text-align: left; cursor: pointer; }
+  .member:hover { border-color: var(--accent); }
+  .who { flex: 1; display: grid; }
+  .who span { color: var(--muted); font-size: 13px; }
+  .role { font-size: 12px; padding: 0 6px; border-radius: 4px; background: var(--accent-soft); color: var(--accent); }
+  .newcomer { display: flex; gap: 8px; }
+  .newcomer input { flex: 1; font: inherit; color: var(--text); background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 0 12px; }
+  .error { color: var(--danger); }
+</style>

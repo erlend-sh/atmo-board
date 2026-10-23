@@ -1,0 +1,29 @@
+{
+  "lexicon": 1,
+  "id": "group.opensocial.rule",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "Vendored draft. One group rule, in meta.",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": [
+          "text",
+          "createdAt"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "maxGraphemes": 2000,
+            "maxLength": 20000
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime"
+          }
+        }
+      }
+    }
+  }
+}

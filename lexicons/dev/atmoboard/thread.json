@@ -1,0 +1,61 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.thread",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "A thread. Threads all the way down: a channel is a thread the group lists in its sidebar (see channel), and a named thread is a thread whose parent is another thread. Lives in a forum space, written by its author. Field names follow garden.msg.thread where they overlap.",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": [
+          "createdAt"
+        ],
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 3000,
+            "maxGraphemes": 300,
+            "description": "Absent for an untitled thread."
+          },
+          "parent": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "The thread this one lives in. Absent for top-level threads (channels)."
+          },
+          "textContent": {
+            "type": "string",
+            "maxLength": 100000,
+            "maxGraphemes": 10000,
+            "description": "Plain-text rendering of the opening post."
+          },
+          "content": {
+            "type": "union",
+            "refs": [
+              "dev.atmoboard.defs#markdown"
+            ],
+            "description": "The opening post in a rich format. Open union."
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 640,
+              "maxGraphemes": 64
+            },
+            "maxLength": 8
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "datetime"
+          }
+        }
+      }
+    }
+  }
+}

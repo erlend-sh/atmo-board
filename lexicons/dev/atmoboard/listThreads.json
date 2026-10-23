@@ -1,0 +1,67 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.listThreads",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Threads, newest activity first by default. With parent: the named threads of one channel.",
+      "parameters": {
+        "type": "params",
+        "required": [],
+        "properties": {
+          "parent": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 10,
+            "description": "Channel (or thread) key."
+          },
+          "tag": {
+            "type": "string"
+          },
+          "sort": {
+            "type": "string",
+            "knownValues": [
+              "latest",
+              "new",
+              "top"
+            ],
+            "default": "latest"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 30
+          },
+          "cursor": {
+            "type": "string"
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "threads"
+          ],
+          "properties": {
+            "threads": {
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "dev.atmoboard.defs#threadView"
+              }
+            },
+            "cursor": {
+              "type": "string"
+            },
+            "changeCursor": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
