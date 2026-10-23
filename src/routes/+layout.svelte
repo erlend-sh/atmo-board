@@ -5,6 +5,8 @@
   let { data, children } = $props();
   let open = $state(false);
   const current = $derived(page.params.key);
+  // The sidebar's only counter: total unread on Latest. Channels just turn bold.
+  const total = $derived(data.sections.reduce((n, s) => n + s.channels.reduce((m, c) => m + (c.unreadCount ?? 0), 0), 0));
   $effect(() => { page.url.pathname; open = false; });
   const me = $derived(data.viewer.did ? { did: data.viewer.did, handle: data.viewer.handle, roles: data.viewer.roles } : null);
 </script>
@@ -15,13 +17,12 @@
   <aside class:open>
     <a class="forum" href="/">{data.forum.name}</a>
     <nav>
-      <a class="link" class:active={page.url.pathname === '/'} href="/">Latest</a>
+      <a class="link" class:active={page.url.pathname === '/'} href="/"><span class="name">Latest</span>{#if total}<span class="badge">{total}</span>{/if}</a>
       {#each data.sections as section}
         {#if section.name}<h2>{section.name}</h2>{/if}
         {#each section.channels as ch (ch.key)}
           <a class="channel" class:active={current === ch.key} class:unread={(ch.unreadCount ?? 0) > 0} href="/c/{ch.slug}/{ch.key}">
             <span class="hash">{ch.icon ?? '#'}</span><span class="name">{ch.title}</span>
-            {#if ch.unreadCount}<span class="badge">{ch.unreadCount}</span>{/if}
           </a>
         {/each}
       {/each}

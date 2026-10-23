@@ -12,6 +12,7 @@
   const ch = $derived(data.chat.channel);
   const t = $derived(data.chat.thread);
   const base = $derived(`/c/${t.slug}/${t.key}`);
+  const chatUnread = $derived(data.viewer.did ? Math.max(0, t.postCount - (t.lastReadNumber ?? 0)) : 0);
   let composing = $state(false);
   let chatEnd: HTMLElement | undefined = $state();
   $effect(() => { data.chat.posts.length; if (data.view === 'chat') chatEnd?.scrollIntoView({ block: 'end' }); });
@@ -22,7 +23,13 @@
 <div class="page">
   <div class="page-head">
     <div class="grow">
-      <h1>{ch?.icon ?? '#'} {ch?.title ?? t.title}</h1>
+      <div class="title-row">
+        <h1>{ch?.icon ?? '#'} {ch?.title ?? t.title}</h1>
+        <nav class="pills" aria-label="Channel view">
+          <a href={base} class:active={data.view === 'threads'}>Threads</a>
+          <a href="{base}?view=chat" class:active={data.view === 'chat'}>Chat{#if chatUnread && data.view !== 'chat'} <span class="count">{chatUnread}</span>{/if}</a>
+        </nav>
+      </div>
       {#if ch?.description}<p>{ch.description}</p>{/if}
     </div>
     {#if data.chat.permissions.create && data.view === 'threads'}
@@ -31,10 +38,6 @@
   </div>
   <JoinNotice viewer={data.viewer} />
 
-  <nav class="tabs">
-    <a href={base} class:active={data.view === 'threads'}>Threads</a>
-    <a href="{base}?view=chat" class:active={data.view === 'chat'}>Chat{#if ch?.unreadCount && data.view !== 'chat'} · {ch.unreadCount}{/if}</a>
-  </nav>
 
   {#if data.view === 'threads'}
     {#if composing}

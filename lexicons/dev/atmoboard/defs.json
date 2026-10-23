@@ -163,9 +163,6 @@
         "locked": {
           "type": "boolean"
         },
-        "resolved": {
-          "type": "boolean"
-        },
         "pinned": {
           "type": "boolean"
         },

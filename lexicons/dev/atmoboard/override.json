@@ -27,8 +27,6 @@
               "unhide",
               "lock",
               "unlock",
-              "resolve",
-              "unresolve",
               "pin",
               "unpin",
               "setTrustLevel"

@@ -33,7 +33,6 @@
     <div class="grow">
       <h1>
         {#if t.state.locked}<span title="Locked">🔒</span>{/if}
-        {#if t.state.resolved}<span title="Resolved">✔</span>{/if}
         {t.title ?? 'Untitled'}
       </h1>
       {#if t.tags.length}<p>{#each t.tags as tag}<a class="tag" href="/tag/{tag}">{tag}</a> {/each}</p>{/if}

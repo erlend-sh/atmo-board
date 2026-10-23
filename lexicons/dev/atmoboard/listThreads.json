@@ -23,6 +23,7 @@
             "knownValues": [
               "latest",
               "new",
+              "unread",
               "top"
             ],
             "default": "latest"

@@ -46,8 +46,11 @@ h1, h2, h3 { line-height: 1.25; margin: 0; }
 .crumbs a { color: var(--accent); }
 .notice { padding: 12px 14px; border-radius: var(--radius); background: var(--accent-soft); margin-bottom: 18px;
   display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
-.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
-.tabs a { padding: 8px 12px; color: var(--muted); font-weight: 600; border-bottom: 2px solid transparent; margin-bottom: -1px; }
-.tabs a.active { color: var(--text); border-color: var(--accent); }
-.tabs a:hover { text-decoration: none; color: var(--text); }
+.count { min-width: 20px; height: 18px; padding: 0 6px; border-radius: 9px; background: var(--accent); color: var(--on-accent);
+  font-size: 12px; font-weight: 700; display: inline-grid; place-items: center; font-variant-numeric: tabular-nums; }
+.title-row { display: flex; align-items: center; gap: 8px 14px; flex-wrap: wrap; }
+.pills { display: inline-flex; gap: 2px; padding: 3px; border-radius: 999px; background: var(--surface-2); }
+.pills a { display: inline-flex; gap: 6px; align-items: center; padding: 4px 13px; border-radius: 999px; font-size: 14px; font-weight: 600; color: var(--muted); }
+.pills a:hover { color: var(--text); text-decoration: none; }
+.pills a.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 3px rgb(0 0 0 / .14); }
 @media (max-width: 800px) { .page { padding: 64px 16px 96px; } }
