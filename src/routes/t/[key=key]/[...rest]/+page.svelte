@@ -11,7 +11,7 @@
   $effect(() => { if (data.marked) invalidate('app:sidebar'); });
   const p = $derived(data.page);
   const t = $derived(p.thread);
-  const base = $derived(`/t/${t.slug}/${t.key}`);
+  const base = $derived(threadHref(t));
   const first = $derived(p.posts[0]?.number ?? 1);
   const lastShown = $derived(p.posts.at(-1)?.number ?? 0);
   let replyTo = $state<{ key: string; number: number; name: string } | null>(null);

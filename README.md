@@ -3,7 +3,7 @@
 An atmospheric comms application: Discourse on atproto, a little more minimal, with Discord's channels. One install is one forum, and each forum is an [Atmospheric Group](https://tangled.org/opensocial.group/proposal).
 
 - **Threads all the way down.** A channel is a thread with a sidebar entry. Its own posts are the channel's untitled chat, and its child threads are the named threads.
-- **Discourse URLs.** `/t/{slug}/{key}/{n}` points at post *n*, `/p/{key}` is a permalink, and stale slugs redirect. A key is 10 base32 characters of the sha256 of the record's at-uri.
+- **Discourse URLs.** `/t/{key}/{slug}/{n}` points at post *n*, a channel is `/c/{key}/{slug}` and its chat `/c/{key}/{slug}/chat`, `/p/{key}` is a permalink, and stale slugs redirect. A key is 10 base32 characters of the sha256 of the record's at-uri.
 - **Slow realtime.** Pages are server-rendered, and an open tab polls for change hints every 15 seconds.
 
 The stack follows [atmoBB](https://github.com/keithk/atmoBB): SvelteKit (Svelte 5, adapter-node) for the web app, and [HappyView](https://github.com/gamesgamesgamesgamesgames/happyview) as the appview. The whole API is HappyView XRPC (`dev.atmoboard.*`), written in Lua, and forum content lives in HappyView's permissioned spaces.

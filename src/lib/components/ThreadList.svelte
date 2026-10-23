@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Author, ThreadView } from '$lib/types';
   import { age, fullDate } from '$lib/time';
-  import { displayName, threadHref } from '$lib/names';
+  import { channelHref, displayName, threadHref } from '$lib/names';
   import Avatar from './Avatar.svelte';
   /** A channel's own chat, shown as a row above its threads. */
   // Chat never shows a count (busy chats run high); unread just bolds it.
@@ -42,7 +42,7 @@
           {#each t.participants ?? [t.author] as p (p.did)}<span title={displayName(p)}><Avatar author={p} size={22} /></span>{/each}
         </span>
         {#if showChannel}
-          {#if ch}<a class="chan" href="/c/{ch.slug}/{ch.key}">{ch.icon ?? '#'} {ch.title}</a>{:else}<span></span>{/if}
+          {#if ch}<a class="chan" href={channelHref(ch)}>{ch.icon ?? '#'} {ch.title}</a>{:else}<span></span>{/if}
         {/if}
         <a class="age" href={threadHref(t, t.postCount)} title={fullDate(t.lastActivityAt)}>{age(t.lastActivityAt)}</a>
       </li>

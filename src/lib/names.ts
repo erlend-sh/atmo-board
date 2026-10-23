@@ -11,5 +11,8 @@ export function hue(did: string): number {
   return h;
 }
 
-export const threadHref = (t: { slug: string; key: string; isChannel?: boolean }, n?: number) =>
-  t.isChannel ? `/c/${t.slug}/${t.key}` : `/t/${t.slug}/${t.key}${n ? `/${n}` : ''}`;
+// Key first, slug after: /t/{key}/{slug}/{n}, /c/{key}/{slug}, /c/{key}/{slug}/chat.
+// The key is the identity; the slug is decorative and redirects when stale.
+export const threadHref = (t: { slug: string; key: string; isChannel?: boolean }, n?: number | 'last') =>
+  t.isChannel ? channelHref(t) : `/t/${t.key}/${t.slug}${n ? `/${n}` : ''}`;
+export const channelHref = (c: { slug: string; key: string }, chat = false) => `/c/${c.key}/${c.slug}${chat ? '/chat' : ''}`;

@@ -2,6 +2,7 @@
   import '$lib/styles/app.css';
   import { page } from '$app/state';
   import Avatar from '$lib/components/Avatar.svelte';
+  import { channelHref } from '$lib/names';
   let { data, children } = $props();
   let open = $state(false);
   const current = $derived(page.params.key);
@@ -22,7 +23,7 @@
       {#each data.sections as section}
         {#if section.name}<h2>{section.name}</h2>{/if}
         {#each section.channels as ch (ch.key)}
-          <a class="channel" class:active={current === ch.key} class:unread={(ch.unreadCount ?? 0) > 0 || ch.unreadChat} href="/c/{ch.slug}/{ch.key}">
+          <a class="channel" class:active={current === ch.key} class:unread={(ch.unreadCount ?? 0) > 0 || ch.unreadChat} href={channelHref(ch)}>
             <span class="hash">{ch.icon ?? '#'}</span><span class="name">{ch.title}</span>
           </a>
         {/each}
