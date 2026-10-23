@@ -12,7 +12,7 @@
   const ch = $derived(data.chat.channel);
   const t = $derived(data.chat.thread);
   const base = $derived(`/c/${t.slug}/${t.key}`);
-  const chatUnread = $derived(data.viewer.did ? Math.max(0, t.postCount - (t.lastReadNumber ?? 0)) : 0);
+  const chatUnread = $derived(!!data.viewer.did && t.postCount > (t.lastReadNumber ?? 0));
   // Most recent chat posters first, for the chat row's participants.
   const chatPeople = $derived([...new Map(data.chat.posts.toReversed().map((p) => [p.author.did, p.author])).values()].slice(0, 5));
   let composing = $state(false);

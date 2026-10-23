@@ -224,7 +224,12 @@
           "format": "datetime"
         },
         "unreadCount": {
-          "type": "integer"
+          "type": "integer",
+          "description": "Threads in the channel with unread posts. Chat is not counted."
+        },
+        "unreadChat": {
+          "type": "boolean",
+          "description": "The channel's own chat has unread posts."
         }
       }
     },

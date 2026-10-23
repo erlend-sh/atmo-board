@@ -4,7 +4,8 @@
   import { displayName, threadHref } from '$lib/names';
   import Avatar from './Avatar.svelte';
   /** A channel's own chat, shown as a row above its threads. */
-  type ChatRow = { href: string; title: string; unread: number; participants: Author[]; lastActivityAt?: string };
+  // Chat never shows a count (busy chats run high); unread just bolds it.
+  type ChatRow = { href: string; title: string; unread: boolean; participants: Author[]; lastActivityAt?: string };
   let { threads, channels = {}, chat, empty = 'No threads yet.' }: {
     threads: ThreadView[]; channels?: Record<string, { title: string; slug: string; key: string; icon?: string }>;
     chat?: ChatRow; empty?: string;
@@ -20,7 +21,7 @@
   <ol class="threads" class:no-chan={!showChannel}>
     {#if chat}
       <li class="chat">
-        <span class="marks"><span class="chat-ico" title="Chat">💬</span>{#if chat.unread}<span class="count" title="{chat.unread} unread">{chat.unread}</span>{/if}</span>
+        <span class="marks"><span class="chat-ico" title="Chat">💬</span></span>
         <a class="title" class:read={!chat.unread} href={chat.href}>{chat.title}</a>
         <span class="faces">{#each chat.participants as p (p.did)}<span title={displayName(p)}><Avatar author={p} size={22} /></span>{/each}</span>
         {#if showChannel}<span></span>{/if}

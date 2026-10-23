@@ -271,6 +271,7 @@ local function channel_view(row, viewer)
   if row.icon then v.icon = row.icon end
   if row.section then v.section = row.section end
   if row.unread then v.unreadCount = tonumber(row.unread) end
+  if row.unread_chat ~= nil then v.unreadChat = truthy(row.unread_chat) end
   return v
 end
 

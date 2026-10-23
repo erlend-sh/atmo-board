@@ -5,7 +5,7 @@ export interface ThreadState { locked: boolean; pinned: boolean; hidden: boolean
 export interface Markdown { $type: 'dev.atmoboard.defs#markdown'; text: string }
 export interface ChannelView {
   key: string; uri: string; slug: string; title: string; description?: string; icon?: string; section?: string;
-  position: number; private?: boolean; threadCount?: number; postCount?: number; lastActivityAt?: string; unreadCount?: number;
+  position: number; private?: boolean; threadCount?: number; postCount?: number; lastActivityAt?: string; unreadCount?: number; unreadChat?: boolean;
 }
 export interface SectionView { name: string; channels: ChannelView[] }
 export interface ThreadView {
