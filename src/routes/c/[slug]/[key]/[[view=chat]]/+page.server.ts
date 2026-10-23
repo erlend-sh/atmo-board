@@ -5,10 +5,13 @@ import { actionFailure, pageError } from '$lib/server/errors';
 import type { ThreadPage, ThreadView } from '$lib/types';
 
 // A channel is a thread with a sidebar entry. Its own posts are the untitled
-// chat; its child threads are the named threads.
+// chat, at /c/{slug}/{key}/chat and titled "{channel}/chat"; its child
+// threads are the named threads, listed at /c/{slug}/{key} under the chat row.
 export const load: PageServerLoad = async ({ locals, params, url }) => {
   const hv = api(locals.viewer);
-  const view = url.searchParams.get('view') === 'chat' ? 'chat' : 'threads';
+  // ?view=chat was milestone 1's URL for the chat.
+  if (url.searchParams.get('view') === 'chat') redirect(301, `/c/${params.slug}/${params.key}/chat`);
+  const view = params.view === 'chat' ? 'chat' : 'threads';
   let chat: ThreadPage, list: { threads: ThreadView[]; changeCursor: string };
   try {
     [chat, list] = await Promise.all([
@@ -17,7 +20,7 @@ export const load: PageServerLoad = async ({ locals, params, url }) => {
     ]);
   } catch (e) { pageError(e); }
   if (!chat.thread.isChannel) redirect(301, `/t/${chat.thread.slug}/${chat.thread.key}`);
-  if (chat.thread.slug !== params.slug) redirect(301, `/c/${chat.thread.slug}/${chat.thread.key}${url.search}`);
+  if (chat.thread.slug !== params.slug) redirect(301, `/c/${chat.thread.slug}/${chat.thread.key}${params.view ? '/chat' : ''}${url.search}`);
   let marked = false;
   const last = chat.posts.at(-1)?.number ?? 0;
   if (view === 'chat' && locals.viewer && last > (chat.thread.lastReadNumber ?? 0)) {

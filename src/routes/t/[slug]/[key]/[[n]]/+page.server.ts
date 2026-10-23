@@ -16,7 +16,7 @@ export const load: PageServerLoad = async ({ locals, params, url }) => {
     page = await hv.query<ThreadPage>('getThread', { key: params.key, anchor, before: n ? 20 : undefined, after: 100 });
   } catch (e) { pageError(e); }
   const t = page.thread;
-  if (t.isChannel) redirect(301, `/c/${t.slug}/${t.key}`);
+  if (t.isChannel) redirect(301, `/c/${t.slug}/${t.key}/chat`);
   if (t.slug !== params.slug) redirect(301, `/t/${t.slug}/${t.key}${n ? `/${n}` : ''}${url.search}`);
   const last = page.posts.at(-1)?.number;
   let marked = false;

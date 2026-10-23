@@ -13,24 +13,27 @@
   const t = $derived(data.chat.thread);
   const base = $derived(`/c/${t.slug}/${t.key}`);
   const chatUnread = $derived(data.viewer.did ? Math.max(0, t.postCount - (t.lastReadNumber ?? 0)) : 0);
+  // Most recent chat posters first, for the chat row's participants.
+  const chatPeople = $derived([...new Map(data.chat.posts.toReversed().map((p) => [p.author.did, p.author])).values()].slice(0, 5));
   let composing = $state(false);
   let chatEnd: HTMLElement | undefined = $state();
   $effect(() => { data.chat.posts.length; if (data.view === 'chat') chatEnd?.scrollIntoView({ block: 'end' }); });
 </script>
 
-<svelte:head><title>#{ch?.title ?? t.title} · {data.forum.name}</title></svelte:head>
+<svelte:head><title>{ch?.title ?? t.title}{data.view === 'chat' ? '/chat' : ''} · {data.forum.name}</title></svelte:head>
 
 <div class="page">
+  {#if data.view === 'chat'}
+    <div class="crumbs"><a href={base}>{ch?.icon ?? '#'} {ch?.title ?? t.title}</a></div>
+  {/if}
   <div class="page-head">
     <div class="grow">
-      <div class="title-row">
+      {#if data.view === 'chat'}
+        <h1>💬 {ch?.title ?? t.title}/chat</h1>
+      {:else}
         <h1>{ch?.icon ?? '#'} {ch?.title ?? t.title}</h1>
-        <nav class="pills" aria-label="Channel view">
-          <a href={base} class:active={data.view === 'threads'}>Threads</a>
-          <a href="{base}?view=chat" class:active={data.view === 'chat'}>Chat{#if chatUnread && data.view !== 'chat'} <span class="count">{chatUnread}</span>{/if}</a>
-        </nav>
-      </div>
-      {#if ch?.description}<p>{ch.description}</p>{/if}
+        {#if ch?.description}<p>{ch.description}</p>{/if}
+      {/if}
     </div>
     {#if data.chat.permissions.create && data.view === 'threads'}
       <button class="btn primary" onclick={() => (composing = !composing)}>{composing ? 'Cancel' : 'New thread'}</button>
@@ -43,7 +46,10 @@
     {#if composing}
       <div class="new-thread"><Composer action="?/thread" title submit="Create thread" placeholder="What's this thread about? Markdown works." /></div>
     {/if}
-    <ThreadList threads={data.threads} />
+    <ThreadList threads={data.threads} chat={{
+      href: `${base}/chat`, title: `${ch?.title ?? t.title}/chat`, unread: chatUnread,
+      participants: chatPeople, lastActivityAt: data.chat.posts.at(-1)?.createdAt,
+    }} />
   {:else}
     <section class="chat">
       {#if data.chat.hasBefore}<p class="more">Showing the latest {data.chat.posts.length} messages.</p>{/if}
@@ -54,7 +60,7 @@
       <div bind:this={chatEnd}></div>
     </section>
     {#if data.chat.permissions.reply}
-      <div class="dock"><Composer action="?/chat" placeholder="Message #{ch?.title ?? ''}" /></div>
+      <div class="dock"><Composer action="?/chat" placeholder="Message {ch?.title ?? ''}/chat" /></div>
     {/if}
   {/if}
 </div>

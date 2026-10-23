@@ -1,19 +1,32 @@
 <script lang="ts">
-  import type { ThreadView } from '$lib/types';
+  import type { Author, ThreadView } from '$lib/types';
   import { age, fullDate } from '$lib/time';
   import { displayName, threadHref } from '$lib/names';
   import Avatar from './Avatar.svelte';
-  let { threads, channels = {}, empty = 'No threads yet.' }:
-    { threads: ThreadView[]; channels?: Record<string, { title: string; slug: string; key: string; icon?: string }>; empty?: string } = $props();
+  /** A channel's own chat, shown as a row above its threads. */
+  type ChatRow = { href: string; title: string; unread: number; participants: Author[]; lastActivityAt?: string };
+  let { threads, channels = {}, chat, empty = 'No threads yet.' }: {
+    threads: ThreadView[]; channels?: Record<string, { title: string; slug: string; key: string; icon?: string }>;
+    chat?: ChatRow; empty?: string;
+  } = $props();
   // -1: a thread the viewer has never opened; otherwise the unread post count.
   const unread = (t: ThreadView) => (t.lastReadNumber === undefined ? -1 : Math.max(0, t.postCount - t.lastReadNumber));
   const showChannel = $derived(Object.keys(channels).length > 0);
 </script>
 
-{#if threads.length === 0}
+{#if threads.length === 0 && !chat}
   <p class="empty">{empty}</p>
 {:else}
   <ol class="threads" class:no-chan={!showChannel}>
+    {#if chat}
+      <li class="chat">
+        <span class="marks"><span class="chat-ico" title="Chat">💬</span>{#if chat.unread}<span class="count" title="{chat.unread} unread">{chat.unread}</span>{/if}</span>
+        <a class="title" class:read={!chat.unread} href={chat.href}>{chat.title}</a>
+        <span class="faces">{#each chat.participants as p (p.did)}<span title={displayName(p)}><Avatar author={p} size={22} /></span>{/each}</span>
+        {#if showChannel}<span></span>{/if}
+        {#if chat.lastActivityAt}<a class="age" href={chat.href} title={fullDate(chat.lastActivityAt)}>{age(chat.lastActivityAt)}</a>{:else}<span></span>{/if}
+      </li>
+    {/if}
     {#each threads as t (t.key)}
       {@const n = unread(t)}
       {@const ch = t.parent ? channels[t.parent] : undefined}
@@ -52,6 +65,7 @@
   .faces > span:first-child { margin-left: 0; }
   .chan { color: var(--muted); font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .age { color: var(--muted); font-size: 13.5px; text-align: right; font-variant-numeric: tabular-nums; }
+  .chat-ico { font-size: 13px; }
   .empty { color: var(--muted); padding: 24px 0; }
   @media (max-width: 600px) {
     li, .no-chan li { grid-template-columns: 46px minmax(0, 1fr) auto auto; gap: 8px; }
