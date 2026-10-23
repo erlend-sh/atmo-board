@@ -1,6 +1,7 @@
 -- xrpc.query: dev.atmoboard.getSidebar
 -- Channels the viewer can see, grouped by section in position order.
--- unreadCount counts unread untitled-chat posts plus threads with unread posts.
+-- unreadCount counts threads with unread posts. Chat is only a flag
+-- (unreadChat): busy chats would swamp any count.
 function handle()
   local rows = exec(CHANNEL_SQL .. " ORDER BY c.position, i.created_at")
   local sections, order = {}, {}
@@ -8,7 +9,7 @@ function handle()
     if permissions(caller_did, row.key).see then
       if caller_did then
         local u = one([[
-          SELECT GREATEST(0, i.post_count - COALESCE(r.last_read, 0)) +
+          SELECT i.post_count > COALESCE(r.last_read, 0) AS chat,
                  (SELECT count(*) FROM ab_items t
                     LEFT JOIN ab_reads tr ON tr.thread_key = t.key AND tr.did = $2
                   WHERE t.parent_key = i.key AND t.kind = 'thread' AND NOT t.deleted AND NOT t.hidden
@@ -16,6 +17,7 @@ function handle()
           FROM ab_items i LEFT JOIN ab_reads r ON r.thread_key = i.key AND r.did = $2
           WHERE i.key = $1]], { row.key, caller_did })
         row.unread = u and u.n or 0
+        row.unread_chat = u and u.chat or false
       end
       local name = row.section or ""
       if not sections[name] then

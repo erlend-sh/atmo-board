@@ -44,7 +44,6 @@ CREATE TABLE IF NOT EXISTS ab_items (
   last_activity_at text,
   post_count       integer NOT NULL DEFAULT 0,
   locked           boolean NOT NULL DEFAULT false,
-  resolved         boolean NOT NULL DEFAULT false,
   pinned           boolean NOT NULL DEFAULT false,
   hidden           boolean NOT NULL DEFAULT false,
   deleted          boolean NOT NULL DEFAULT false
@@ -98,5 +97,8 @@ CREATE TABLE IF NOT EXISTS ab_changes (
   parent_key text,
   at         timestamptz NOT NULL DEFAULT now()
 );
+
+-- Removed columns (kept as drops so existing databases converge).
+ALTER TABLE ab_items DROP COLUMN IF EXISTS resolved;
 
 COMMIT;

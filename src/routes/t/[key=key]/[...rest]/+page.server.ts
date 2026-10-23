@@ -3,12 +3,21 @@ import type { Actions, PageServerLoad } from './$types';
 import { api } from '$lib/server/hv';
 import { actionFailure, pageError } from '$lib/server/errors';
 import type { ThreadPage } from '$lib/types';
+import { channelHref, threadHref } from '$lib/names';
 
-// /t/{slug}/{key}, /t/{slug}/{key}/{n} and /t/{slug}/{key}/last, Discourse
-// style. The slug is decorative: a stale one gets a 301 to the canonical URL.
+// /t/{key}/{slug}, /t/{key}/{slug}/{n} and /t/{key}/{slug}/last. The key is
+// the identity; the slug is decorative, may be missing (/t/{key}/{n} works),
+// and a stale one gets a 301 to the canonical URL.
+function parse(rest: string) {
+  const parts = rest.split('/').filter(Boolean);
+  const isPos = (s?: string) => s === 'last' || /^\d+$/.test(s ?? '');
+  const n = isPos(parts.at(-1)) ? parts.pop() : undefined;
+  if (parts.length > 1) error(404, 'Not found');
+  return { slug: parts[0], n };
+}
+
 export const load: PageServerLoad = async ({ locals, params, url }) => {
-  const n = params.n;
-  if (n !== undefined && n !== 'last' && !/^\d+$/.test(n)) error(404, 'Not found');
+  const { slug, n } = parse(params.rest);
   const anchor = n ?? (locals.viewer ? 'first_unread' : 'first');
   const hv = api(locals.viewer);
   let page: ThreadPage;
@@ -16,8 +25,8 @@ export const load: PageServerLoad = async ({ locals, params, url }) => {
     page = await hv.query<ThreadPage>('getThread', { key: params.key, anchor, before: n ? 20 : undefined, after: 100 });
   } catch (e) { pageError(e); }
   const t = page.thread;
-  if (t.isChannel) redirect(301, `/c/${t.slug}/${t.key}`);
-  if (t.slug !== params.slug) redirect(301, `/t/${t.slug}/${t.key}${n ? `/${n}` : ''}${url.search}`);
+  if (t.isChannel) redirect(301, channelHref(t, true));
+  if (t.slug !== slug) redirect(301, threadHref(t, n as number | 'last' | undefined) + url.search);
   const last = page.posts.at(-1)?.number;
   let marked = false;
   if (locals.viewer && last && last > (t.lastReadNumber ?? 0)) {

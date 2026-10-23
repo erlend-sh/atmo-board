@@ -164,7 +164,7 @@ local ITEM_COLS = [[
   i.key, i.uri, i.kind, i.space, i.author, i.thread_key, i.parent_key, i.title, i.slug,
   i.text, i.content::text AS content, i.tags::text AS tags, i.number, i.reply_to,
   i.created_at, i.updated_at, i.last_activity_at, i.post_count,
-  i.locked, i.resolved, i.pinned, i.hidden,
+  i.locked, i.pinned, i.hidden,
   m.handle AS author_handle, m.display_name AS author_name, m.avatar AS author_avatar,
   m.roles::text AS author_roles, m.trust_level AS author_tl,
   c.thread_key IS NOT NULL AS is_channel
@@ -214,7 +214,7 @@ local function thread_view(row, viewer)
     createdAt = row.created_at, lastActivityAt = row.last_activity_at or row.created_at,
     isChannel = truthy(row.is_channel),
     tags = toarray(decode(row.tags) or {}),
-    state = { locked = truthy(row.locked), resolved = truthy(row.resolved), pinned = truthy(row.pinned), hidden = truthy(row.hidden) },
+    state = { locked = truthy(row.locked), pinned = truthy(row.pinned), hidden = truthy(row.hidden) },
   }
   if row.title and row.title ~= "" then v.title = row.title end
   if row.parent_key then v.parent = row.parent_key end
@@ -271,6 +271,7 @@ local function channel_view(row, viewer)
   if row.icon then v.icon = row.icon end
   if row.section then v.section = row.section end
   if row.unread then v.unreadCount = tonumber(row.unread) end
+  if row.unread_chat ~= nil then v.unreadChat = truthy(row.unread_chat) end
   return v
 end
 

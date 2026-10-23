@@ -11,7 +11,7 @@
   $effect(() => { if (data.marked) invalidate('app:sidebar'); });
   const p = $derived(data.page);
   const t = $derived(p.thread);
-  const base = $derived(`/t/${t.slug}/${t.key}`);
+  const base = $derived(threadHref(t));
   const first = $derived(p.posts[0]?.number ?? 1);
   const lastShown = $derived(p.posts.at(-1)?.number ?? 0);
   let replyTo = $state<{ key: string; number: number; name: string } | null>(null);
@@ -33,7 +33,6 @@
     <div class="grow">
       <h1>
         {#if t.state.locked}<span title="Locked">🔒</span>{/if}
-        {#if t.state.resolved}<span title="Resolved">✔</span>{/if}
         {t.title ?? 'Untitled'}
       </h1>
       {#if t.tags.length}<p>{#each t.tags as tag}<a class="tag" href="/tag/{tag}">{tag}</a> {/each}</p>{/if}
