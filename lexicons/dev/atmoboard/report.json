@@ -1,0 +1,77 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.report",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Flag a post for staff review. Private host state, never a public record. Enough open flags hide a post until staff decide.",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "subject",
+            "reason"
+          ],
+          "properties": {
+            "subject": {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 10,
+              "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+            },
+            "reason": {
+              "type": "string",
+              "knownValues": [
+                "spam",
+                "offtopic",
+                "inappropriate",
+                "other"
+              ]
+            },
+            "note": {
+              "type": "string",
+              "maxLength": 10000,
+              "maxGraphemes": 1000
+            }
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "subject",
+            "reports"
+          ],
+          "properties": {
+            "subject": {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 10,
+              "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+            },
+            "reports": {
+              "type": "integer"
+            },
+            "hidden": {
+              "type": "boolean"
+            }
+          }
+        }
+      },
+      "errors": [
+        {
+          "name": "Forbidden"
+        },
+        {
+          "name": "NotFound"
+        },
+        {
+          "name": "InvalidRequest"
+        }
+      ]
+    }
+  }
+}

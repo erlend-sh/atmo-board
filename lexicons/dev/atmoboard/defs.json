@@ -35,6 +35,18 @@
         "create": {
           "type": "boolean"
         },
+        "flag": {
+          "type": "boolean",
+          "description": "Report a post (TL1 and up)."
+        },
+        "curate": {
+          "type": "boolean",
+          "description": "Rename and move threads (TL3 and up)."
+        },
+        "manage": {
+          "type": "boolean",
+          "description": "Pin, lock and hide threads, and see hidden posts (TL4 and staff)."
+        },
         "moderate": {
           "type": "boolean"
         },
@@ -42,7 +54,7 @@
           "type": "boolean"
         }
       },
-      "description": "What the viewer may do in one channel: Discourse's See / Reply / Create, plus staff powers."
+      "description": "What the viewer may do in one channel: Discourse's See / Reply / Create, plus the trust-level and staff powers."
     },
     "forumView": {
       "type": "object",
@@ -434,6 +446,18 @@
         "hidden": {
           "type": "boolean"
         },
+        "hiddenBy": {
+          "type": "string",
+          "knownValues": [
+            "staff",
+            "flags"
+          ],
+          "description": "Why it is hidden: a staff override, or community flags."
+        },
+        "whisper": {
+          "type": "boolean",
+          "description": "A staff-only post. Only staff are served it."
+        },
         "editCount": {
           "type": "integer",
           "description": "Earlier versions kept by getPostHistory."
@@ -477,6 +501,106 @@
         }
       }
     },
+    "reportView": {
+      "type": "object",
+      "required": [
+        "reporter",
+        "reason",
+        "status",
+        "createdAt"
+      ],
+      "properties": {
+        "reporter": {
+          "type": "ref",
+          "ref": "#authorView"
+        },
+        "reason": {
+          "type": "string",
+          "knownValues": [
+            "spam",
+            "offtopic",
+            "inappropriate",
+            "other"
+          ]
+        },
+        "note": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "knownValues": [
+            "open",
+            "agreed",
+            "disagreed",
+            "ignored"
+          ]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "datetime"
+        },
+        "resolvedBy": {
+          "type": "string",
+          "format": "did"
+        },
+        "resolvedAt": {
+          "type": "string",
+          "format": "datetime"
+        }
+      }
+    },
+    "reviewItem": {
+      "type": "object",
+      "required": [
+        "subject",
+        "post",
+        "reports"
+      ],
+      "properties": {
+        "subject": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 10,
+          "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+        },
+        "post": {
+          "type": "ref",
+          "ref": "#postView"
+        },
+        "thread": {
+          "type": "ref",
+          "ref": "#threadView"
+        },
+        "reports": {
+          "type": "array",
+          "items": {
+            "type": "ref",
+            "ref": "#reportView"
+          }
+        }
+      }
+    },
+    "channelAccess": {
+      "type": "object",
+      "required": [
+        "group",
+        "level"
+      ],
+      "properties": {
+        "group": {
+          "type": "string",
+          "description": "everyone, members, staff, a role (admin, moderator) or trust_level_0..4."
+        },
+        "level": {
+          "type": "string",
+          "knownValues": [
+            "see",
+            "reply",
+            "create"
+          ]
+        }
+      }
+    },
     "postHit": {
       "type": "object",
       "required": [
@@ -513,7 +637,8 @@
             "channel",
             "member",
             "reaction",
-            "override"
+            "override",
+            "report"
           ]
         },
         "key": {

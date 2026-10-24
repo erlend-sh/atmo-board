@@ -1,6 +1,6 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { api } from '$lib/server/hv';
+import { api, publishTrust } from '$lib/server/hv';
 import { actionFailure, pageError } from '$lib/server/errors';
 import type { ThreadPage, ThreadView } from '$lib/types';
 import { channelHref, threadHref } from '$lib/names';
@@ -29,7 +29,8 @@ export const load: PageServerLoad = async ({ locals, params, url }) => {
   let marked = false;
   const last = chat.posts.at(-1)?.number ?? 0;
   if (view === 'chat' && locals.viewer && last > (chat.thread.lastReadNumber ?? 0)) {
-    marked = await hv.procedure('markRead', { thread: params.key, number: last }).then(() => true, () => false);
+    marked = await hv.procedure<{ trustLevel?: number }>('markRead', { thread: params.key, number: last })
+      .then((r) => (publishTrust(r, locals.viewer), true), () => false);
   }
   return { chat, threads: list.threads, view, marked, changeCursor: chat.changeCursor };
 };
@@ -43,6 +44,7 @@ export const actions: Actions = {
     try {
       await api(locals.viewer).procedure('createPost', {
         thread: params.key, textContent: text, content: { $type: 'dev.atmoboard.defs#markdown', text },
+        whisper: form.get('whisper') === '1' || undefined,
       });
     } catch (e) { return actionFailure(e); }
   },

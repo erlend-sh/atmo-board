@@ -7,7 +7,7 @@ local function participants(key)
     SELECT a.author, m.handle AS author_handle, m.display_name AS author_name, m.avatar AS author_avatar,
            m.roles::text AS author_roles, m.trust_level AS author_tl
     FROM (SELECT author, min(created_at) AS first FROM ab_items
-          WHERE (key = $1 OR (thread_key = $1 AND kind = 'post')) AND NOT deleted AND NOT hidden
+          WHERE (key = $1 OR (thread_key = $1 AND kind = 'post')) AND NOT deleted AND NOT hidden AND NOT whisper
           GROUP BY author) a
     LEFT JOIN ab_members m ON m.did = a.author
     ORDER BY a.first LIMIT 5]], P(key))
@@ -19,13 +19,18 @@ end
 function handle()
   local limit = math.min(tonumber(params.limit) or 30, 100)
   local offset = tonumber(params.cursor) or 0
+  local staff = viewer_is_staff(caller_did)
+  local count = staff and "i.post_count" or "i.last_public"
   local order = ({ latest = "i.last_activity_at DESC", new = "i.created_at DESC",
-    unread = "i.last_activity_at DESC", top = "i.post_count DESC, i.last_activity_at DESC" })[params.sort or "latest"] or "i.last_activity_at DESC"
-  local where, args = { "i.kind = 'thread'", "NOT i.deleted", "NOT i.hidden", "c.thread_key IS NULL" }, {}
+    unread = "i.last_activity_at DESC", top = count .. " DESC, i.last_activity_at DESC" })[params.sort or "latest"] or "i.last_activity_at DESC"
+  local where, args = { "i.kind = 'thread'", "NOT i.deleted", "c.thread_key IS NULL" }, {}
   if params.parent then
     local parent = get_item(params.parent)
     if not parent then return fail("NotFound", "no such channel") end
-    if not permissions(caller_did, channel_of(parent)).see then return fail("NotFound", "no such channel") end
+    local perms = permissions(caller_did, channel_of(parent))
+    if not perms.see then return fail("NotFound", "no such channel") end
+    -- Staff and TL4 see hidden threads in place, marked hidden.
+    if not perms.manage then table.insert(where, "NOT i.hidden") end
     table.insert(args, params.parent)
     table.insert(where, "i.parent_key = $" .. #args)
     order = "i.pinned DESC, " .. order
@@ -36,6 +41,7 @@ function handle()
       if permissions(caller_did, ch.thread_key).see then table.insert(visible, ch.thread_key) end
     end
     if #visible == 0 then return { threads = toarray({}), changeCursor = change_cursor() } end
+    table.insert(where, "NOT i.hidden")
     table.insert(args, table.concat(visible, ","))
     table.insert(where, "i.parent_key = ANY(string_to_array($" .. #args .. ", ','))")
   end
@@ -49,7 +55,7 @@ function handle()
     -- Threads the viewer hasn't seen, or has unread posts in.
     if not caller_did then return { threads = toarray({}), changeCursor = change_cursor() } end
     table.insert(args, caller_did)
-    table.insert(where, "i.post_count > COALESCE((SELECT last_read FROM ab_reads WHERE did = $" .. #args ..
+    table.insert(where, count .. " > COALESCE((SELECT last_read FROM ab_reads WHERE did = $" .. #args ..
       " AND thread_key = i.key), -1)")
   end
   if params.tag then
@@ -63,7 +69,7 @@ function handle()
   local threads = {}
   for i, row in ipairs(rows) do
     if i <= limit then
-      local v = thread_view(row, caller_did)
+      local v = thread_view(row, caller_did, staff)
       v.participants = participants(row.key)
       table.insert(threads, v)
     end

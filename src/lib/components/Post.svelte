@@ -1,15 +1,17 @@
 <script lang="ts">
   import { enhance } from '$app/forms';
-  import type { PostView, RevisionView } from '$lib/types';
+  import type { Permissions, PostView, RevisionView } from '$lib/types';
   import { renderMarkdown } from '$lib/markdown';
   import { age, fullDate } from '$lib/time';
   import { displayName } from '$lib/names';
   import Avatar from './Avatar.svelte';
-  let { post, threadHref, compact = false, viewer, canReact = false, title, deleteTo, onreply }: {
+  let { post, threadHref, compact = false, viewer, canReact = false, perms, title, deleteTo, onreply }: {
     post: PostView; threadHref: string; compact?: boolean;
     /** The signed-in member's DID; their own posts get Edit and Delete. */
     viewer?: string;
     canReact?: boolean;
+    /** The viewer's permissions in this channel: flag, manage (hide) and so on. */
+    perms?: Permissions;
     /** The thread title, when this is a thread's opening post (editing it can retitle the thread). */
     title?: string;
     /** Where to go after deleting (a deleted thread has no page). */
@@ -20,7 +22,10 @@
   const body = $derived(renderMarkdown(post.content?.text ?? post.textContent));
   const staff = $derived(post.author.roles.includes('admin') || post.author.roles.includes('moderator'));
   const mine = $derived(!!viewer && viewer === post.author.did && !post.deleted);
+  const canFlag = $derived(!!perms?.flag && !mine && !post.deleted);
+  const canHide = $derived(!!perms?.manage && !post.deleted);
   let picking = $state(false);
+  let flagging = $state(false);
   let editing = $state(false);
   let history = $state<RevisionView[] | null>(null);
   let error = $state('');
@@ -42,6 +47,12 @@
 <article class="post" class:compact class:deleted={post.deleted} id="post-{post.number}" data-number={post.number}>
   {#if !compact}<Avatar author={post.author} size={40} />{:else}<span class="gutter"></span>{/if}
   <div class="main">
+    {#if post.whisper || post.hidden}
+      <p class="flag-line">
+        {#if post.whisper}<span class="tag whisper">whisper, staff only</span>{/if}
+        {#if post.hidden}<span class="tag hidden">{post.hiddenBy === 'flags' ? 'hidden by flags' : 'hidden by staff'}</span>{/if}
+      </p>
+    {/if}
     {#if !compact}
       <header>
         <a class="name" href="/u/{post.author.handle ?? post.author.did}">{displayName(post.author)}</a>
@@ -54,6 +65,10 @@
 
     {#if post.deleted}
       <p class="gone">This post was deleted by its author.</p>
+    {:else if post.hidden && !post.textContent}
+      <p class="gone">
+        {post.hiddenBy === 'flags' ? 'Hidden by community flags, waiting for staff review.' : 'Hidden by staff.'}
+      </p>
     {:else if editing}
       <form class="edit" method="POST" action="?/edit" use:enhance={submit(() => (editing = false))}>
         <input type="hidden" name="key" value={post.key} />
@@ -83,6 +98,21 @@
       </ol>
     {/if}
 
+    {#if flagging}
+      <form class="flag" method="POST" action="?/report" use:enhance={submit(() => (flagging = false))}>
+        <input type="hidden" name="subject" value={post.key} />
+        <select name="reason" aria-label="Why are you flagging this?">
+          <option value="spam">Spam</option>
+          <option value="offtopic">Off topic</option>
+          <option value="inappropriate">Inappropriate</option>
+          <option value="other">Something else</option>
+        </select>
+        <input name="note" placeholder="Anything staff should know? (optional)" maxlength="500" />
+        <button class="btn primary" type="submit">Send to staff</button>
+        <button class="btn" type="button" onclick={() => (flagging = false)}>Cancel</button>
+      </form>
+    {/if}
+
     {#if !post.deleted && (post.reactions?.length || picking)}
       <div class="reactions">
         {#each post.reactions ?? [] as r (r.emoji)}
@@ -110,10 +140,18 @@
     {#if error}<p class="error">{error}</p>{/if}
   </div>
 
-  {#if !post.deleted && !editing && (canReact || mine || onreply)}
+  {#if !post.deleted && !editing && (canReact || mine || onreply || canFlag || canHide)}
     <div class="actions">
       {#if canReact}<button onclick={() => (picking = !picking)} aria-label="Add reaction" title="Add reaction">☺︎</button>{/if}
       {#if onreply}<button onclick={onreply}>Reply</button>{/if}
+      {#if canFlag}<button onclick={() => (flagging = !flagging)} title="Report to staff">Flag</button>{/if}
+      {#if canHide}
+        <form method="POST" action="?/moderate" use:enhance={submit()}>
+          <input type="hidden" name="subject" value={post.key} />
+          <input type="hidden" name="action" value={post.hidden ? 'unhide' : 'hide'} />
+          <button>{post.hidden ? 'Unhide' : 'Hide'}</button>
+        </form>
+      {/if}
       {#if mine}
         <button onclick={() => { editing = true; picking = false; }}>Edit</button>
         <form method="POST" action="?/delete" use:enhance={({ cancel }) => {
@@ -168,4 +206,12 @@
   .history .meta { display: block; font-size: 12px; color: var(--muted); }
   .history .prose { font-size: 14px; }
   .error { color: var(--danger); margin: 4px 0 0; font-size: 13px; }
+  .flag-line { margin: 0 0 2px; display: flex; gap: 6px; }
+  .tag { font-size: 11px; padding: 0 6px; border-radius: 4px; background: var(--surface-2); color: var(--muted); }
+  .tag.whisper { background: var(--accent-soft); color: var(--accent); }
+  .tag.hidden { color: var(--danger); }
+  .flag { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+  .flag select, .flag input { font: inherit; font-size: 14px; color: var(--text); background: var(--surface-2);
+    border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; }
+  .flag input { flex: 1; min-width: 180px; }
 </style>

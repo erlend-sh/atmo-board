@@ -1,0 +1,57 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.admin.removeMember",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Remove a member: the membership record and every space grant go, and a ban is recorded as a forum-signed override. Their posts stay. Group account only, on behalf of a staff actor (or the member themselves, leaving).",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "member"
+          ],
+          "properties": {
+            "member": {
+              "type": "string",
+              "format": "did"
+            },
+            "actor": {
+              "type": "string",
+              "format": "did"
+            },
+            "reason": {
+              "type": "string",
+              "maxLength": 10000,
+              "maxGraphemes": 1000
+            }
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "member"
+          ],
+          "properties": {
+            "member": {
+              "type": "string",
+              "format": "did"
+            }
+          }
+        }
+      },
+      "errors": [
+        {
+          "name": "Forbidden"
+        },
+        {
+          "name": "NotFound"
+        }
+      ]
+    }
+  }
+}

@@ -19,8 +19,9 @@ const md = (text) => ({ textContent: text, content: { $type: `${NS}.defs#markdow
 const people = {
   alice: { did: 'did:plc:alice0000000000000000000', handle: 'alice.test', displayName: 'Alice', roles: ['admin'] },
   maya: { did: 'did:plc:maya00000000000000000000', handle: 'maya.test', displayName: 'Maya', roles: ['moderator'] },
-  bob: { did: 'did:plc:bob00000000000000000000000', handle: 'bob.test', displayName: 'Bob' },
-  sam: { did: 'did:plc:sam00000000000000000000000', handle: 'sam.test', displayName: 'Sam' },
+  // Trust levels: in a real forum these are earned by reading and posting.
+  bob: { did: 'did:plc:bob00000000000000000000000', handle: 'bob.test', displayName: 'Bob', trustLevel: 3 },
+  sam: { did: 'did:plc:sam00000000000000000000000', handle: 'sam.test', displayName: 'Sam', trustLevel: 1 },
 };
 
 const sidebar = await hv.query(`${NS}.getSidebar`).catch(() => null);
@@ -39,16 +40,19 @@ await procedure('admin.initForum', {
 }, FORUM);
 for (const p of Object.values(people)) {
   await procedure('admin.addMember', {
-    member: p.did, roles: p.roles ?? ['member'], actor: people.alice.did, handle: p.handle, displayName: p.displayName,
+    member: p.did, roles: p.roles ?? ['member'], actor: people.alice.did,
+    trustLevel: p.trustLevel ?? (p.roles ? 4 : 1), handle: p.handle, displayName: p.displayName,
   }, FORUM);
 }
 
-const channel = (title, icon, section, position, description) =>
-  procedure('admin.putChannel', { actor: people.alice.did, title, icon, section, position, description }, FORUM);
+const channel = (title, icon, section, position, description, options = {}) =>
+  procedure('admin.putChannel', { actor: people.alice.did, title, icon, section, position, description, ...options }, FORUM);
 const general = await channel('general', '💬', 'Community', 0, 'Talk about anything');
 const intros = await channel('introductions', '👋', 'Community', 1, 'Say hi and tell us what brought you here');
 const ideas = await channel('ideas', '💡', 'atmo-board', 0, 'Feature ideas and feedback');
 const help = await channel('help', '❓', 'atmo-board', 1, 'Stuck on something? Ask here');
+// A private channel lives in its own space, so only its access list can read it.
+const staff = await channel('staff', '🛡', 'Staff', 0, 'Moderators and admins only', { private: true });
 
 const chat = (ch, who, text) => procedure('createPost', { thread: ch.key, ...md(text) }, as(who));
 const thread = (ch, who, title, text) => procedure('createThread', { parent: ch.key, title, ...md(text) }, as(who));
@@ -77,8 +81,17 @@ const dark = await thread(ideas, people.bob, 'Reactions on chat messages', 'Coul
 await reply(dark, people.maya, 'Done: hover any message and pick an emoji. Edit history came along with it.');
 await thread(ideas, people.sam, 'Trust levels for new members', 'Will new members be sandboxed the way Discourse does it with TL0?');
 
+await chat(staff, people.alice, 'This is the staff channel. It lives in its own space, so only moderators and admins can read it.');
+await chat(staff, people.maya, 'Flagged posts show up under Review in the sidebar.');
+
 const login = await thread(help, people.sam, 'How do I sign in with Bluesky?', 'I only see a member picker on the sign-in page.');
 await reply(login, people.alice, 'That\'s the local demo login. With OAuth configured, the sign-in page takes your handle and sends you to your PDS.');
 
-console.log(`Seeded "Atmo Board": ${Object.keys(people).length} members, 4 channels.`);
+// A whisper: a staff-only post inside a public thread.
+await procedure('createPost', { thread: welcome.key, whisper: true,
+  ...md('Staff note: this is a whisper. Members see the thread without it.') }, as(people.maya));
+// And a flag, so the review queue has something in it.
+await procedure('report', { subject: r2.key, reason: 'offtopic', note: 'Just to show the review queue.' }, as(people.sam));
+
+console.log(`Seeded "Atmo Board": ${Object.keys(people).length} members, 5 channels (one private).`);
 console.log('Members you can sign in as:', Object.values(people).map((p) => p.handle).join(', '));

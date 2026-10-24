@@ -3,6 +3,8 @@ function handle()
   if not caller_did then return fail("Forbidden", "sign in to post") end
   local m = member_row(caller_did)
   if not m then return fail("Forbidden", "join the forum to post") end
+  local sandboxed = sandbox_check(m, input.textContent)
+  if sandboxed then return sandboxed end
   if not input.parent then
     if not is_staff(roles_of(m)) then return fail("Forbidden", "only staff start top-level threads") end
   end

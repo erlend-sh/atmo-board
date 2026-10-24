@@ -6,10 +6,12 @@ function handle()
   if not thread or thread.kind ~= "thread" then return fail("NotFound", "no such thread") end
   local channel_key = channel_of(thread)
   local perms = permissions(caller_did, channel_key)
-  if not perms.see or (truthy(thread.hidden) and not perms.moderate) then
+  if not perms.see or (truthy(thread.hidden) and not perms.manage) then
     return fail("NotFound", "no such thread")
   end
-  local total = tonumber(thread.post_count) or 0
+  -- Whispers are numbered like other posts but only staff see them.
+  local staff = perms.moderate
+  local total = visible_count(thread, staff)
   local has_opening = thread.text ~= nil and thread.text ~= ""
   local anchor = params.anchor or "first"
   local n
@@ -26,25 +28,24 @@ function handle()
   local lo, hi = math.max(1, n - before), math.min(total, n + after)
 
   local posts = {}
-  if has_opening and lo <= 1 then table.insert(posts, opening_post_view(thread, caller_did)) end
+  if has_opening and lo <= 1 then table.insert(posts, opening_post_view(thread, caller_did, perms.manage)) end
   local rows = exec("SELECT " .. ITEM_COLS .. ITEM_FROM ..
-    " WHERE i.kind = 'post' AND i.thread_key = $1 AND i.number BETWEEN $2 AND $3 ORDER BY i.number",
+    " WHERE i.kind = 'post' AND i.thread_key = $1 AND i.number BETWEEN $2 AND $3" ..
+    (staff and "" or " AND NOT i.whisper") .. " ORDER BY i.number",
     P(thread.key, lo, hi))
-  for _, row in ipairs(rows) do
-    if not truthy(row.hidden) or perms.moderate then table.insert(posts, post_view(row, caller_did)) end
-  end
+  for _, row in ipairs(rows) do table.insert(posts, post_view(row, caller_did, perms.manage)) end
 
   local ancestors = {}
   local k = thread.parent_key
   while k do
     local a = get_item(k)
     if not a then break end
-    table.insert(ancestors, 1, thread_view(a, nil))
+    table.insert(ancestors, 1, thread_view(a, nil, staff))
     k = a.parent_key
   end
   local ch = one(CHANNEL_SQL .. " AND i.key = $1", { channel_key })
   local out = {
-    thread = thread_view(thread, caller_did), ancestors = toarray(ancestors), posts = toarray(posts),
+    thread = thread_view(thread, caller_did, staff), ancestors = toarray(ancestors), posts = toarray(posts),
     hasBefore = lo > 1, hasAfter = hi < total, permissions = perms, changeCursor = change_cursor(),
   }
   if ch then out.channel = channel_view(ch, caller_did) end

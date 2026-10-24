@@ -36,6 +36,7 @@
           {#if n === -1}<span class="dot" title="New thread"></span>{:else if n > 0}<span class="count" title="{n} unread">{n}</span>{/if}
           {#if t.state.pinned}<span title="Pinned">📌</span>{/if}
           {#if t.state.locked}<span title="Locked">🔒</span>{/if}
+          {#if t.state.hidden}<span title="Hidden, staff only">🚫</span>{/if}
         </span>
         <a class="title" class:read={n === 0} href={threadHref(t)}>{t.title ?? 'Untitled'}</a>
         <span class="faces" title="{t.postCount} posts">

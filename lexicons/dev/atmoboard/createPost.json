@@ -36,6 +36,10 @@
               "refs": [
                 "dev.atmoboard.defs#markdown"
               ]
+            },
+            "whisper": {
+              "type": "boolean",
+              "description": "Staff only: post into the staff space, visible only to staff."
             }
           }
         }

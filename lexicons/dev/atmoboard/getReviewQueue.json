@@ -1,0 +1,59 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.getReviewQueue",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Staff only: reported posts with their flags, newest first.",
+      "parameters": {
+        "type": "params",
+        "required": [],
+        "properties": {
+          "status": {
+            "type": "string",
+            "knownValues": [
+              "open",
+              "all"
+            ],
+            "default": "open"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 25
+          },
+          "cursor": {
+            "type": "string"
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "items"
+          ],
+          "properties": {
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "dev.atmoboard.defs#reviewItem"
+              }
+            },
+            "cursor": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "errors": [
+        {
+          "name": "Forbidden"
+        }
+      ]
+    }
+  }
+}
