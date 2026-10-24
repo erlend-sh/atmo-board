@@ -10,7 +10,7 @@ The stack follows [atmoBB](https://github.com/keithk/atmoBB): SvelteKit (Svelte 
 
 ## Run the local demo
 
-You need Docker (with Compose), [bun](https://bun.sh), Node 22.19 or newer, `curl`, `jq` and `openssl`. No PDS or atproto account is needed: the demo signs you in as a seeded member.
+You need Docker (with Compose), [bun](https://bun.sh), Node 22.19 or newer, `curl`, `jq` and `openssl`. No PDS or atproto account is needed: the demo lets you sign in as a seeded member.
 
 ```sh
 bun install
@@ -21,6 +21,8 @@ bun run dev          # http://127.0.0.1:5173
 `appview/demo.sh` writes `.env` with fresh secrets, creates a HappyView operator key and API client, installs the lexicons, Lua endpoints and derived tables, and seeds a forum with four channels and some conversation. It's safe to rerun.
 
 On the sign-in page you can be **Alice** (admin), **Maya** (moderator), **Bob** or **Sam**, or arrive as a newcomer and join the forum. Open a second browser profile as someone else to watch posts arrive by polling.
+
+The same page also takes a real atproto handle. Sign-in is OAuth through HappyView's SDK, asking only for the bare `atproto` scope: it proves who you are, and your posts are written through the forum's space rather than to your PDS. Locally it uses atproto's loopback client, so it works from `http://127.0.0.1:5173` with no hosted metadata. In production, set `ATMOBOARD_APP_URL` to the https URL (its `/oauth-client-metadata.json` becomes the client_id, and the HappyView API client must be registered with it) and give `DATA_DIR` a persistent volume.
 
 To start over, run `docker compose down -v` and then `sh appview/demo.sh` again.
 
@@ -34,9 +36,13 @@ To start over, run `docker compose down -v` and then `sh appview/demo.sh` again.
 | `appview/setup.sh` | Idempotent HappyView configuration; run after every deploy |
 | `appview/demo.sh`, `seed-dev.mjs` | The local demo |
 | `src/` | The SvelteKit web app |
+| `src/lib/server/oauth/` | atproto OAuth through `@happyview/oauth-client-node`, ported from atmoBB |
 
 ## Status
 
-Milestone 1 (skeleton): channels, chat, threads, replies, unread counts, polling, permalinks and the dev sign-in. Next: atproto OAuth sign-in through HappyView, reactions, edit history and search, then trust levels and moderation, then a Railway deployment.
+- Milestone 1: channels, chat, threads, replies, unread counts, polling, permalinks and the demo sign-in.
+- Milestone 2: reactions, edits with history, author deletes, search (`/search`, narrowable by member or thread), watching and muting threads and channels, and atproto OAuth sign-in.
+
+Next: roles and trust levels, moderation (move, rename, hide, lock, pin), reports and a review queue, whispers and private channels; then a Railway deployment.
 
 `dev.atmoboard` is a placeholder namespace.

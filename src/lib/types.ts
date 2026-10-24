@@ -12,11 +12,13 @@ export interface ThreadView {
   key: string; uri: string; slug: string; title?: string; parent?: string; isChannel?: boolean; author: Author;
   textContent?: string; content?: Markdown; tags: string[]; postCount: number; createdAt: string; updatedAt?: string;
   lastActivityAt: string; state: ThreadState; lastReadNumber?: number; participants?: Author[];
+  notificationLevel?: 'watching' | 'normal' | 'muted';
 }
 export interface Reaction { emoji: string; count: number; viewer?: boolean }
 export interface PostView {
   key: string; uri: string; number: number; thread: string; author: Author; textContent: string; content?: Markdown;
   replyTo?: number; reactions?: Reaction[]; createdAt: string; updatedAt?: string; hidden?: boolean;
+  editCount?: number; deleted?: boolean;
 }
 export interface ForumView { did: string; name: string; description?: string; joinPolicy: string }
 export interface ViewerState { did?: string; handle?: string; member: boolean; roles: string[]; trustLevel?: number; permissions: Permissions }
@@ -24,3 +26,5 @@ export interface ThreadPage {
   thread: ThreadView; channel?: ChannelView; ancestors: ThreadView[]; posts: PostView[];
   hasBefore: boolean; hasAfter: boolean; permissions: Permissions; changeCursor: string;
 }
+export interface RevisionView { version: number; title?: string; textContent: string; content?: Markdown; createdAt: string; current?: boolean }
+export interface PostHit { post: PostView; thread: ThreadView }

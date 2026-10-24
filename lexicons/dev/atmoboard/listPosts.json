@@ -1,0 +1,60 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.listPosts",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Find posts across chat and threads, Zulip-narrow style. All filters combine.",
+      "parameters": {
+        "type": "params",
+        "required": [],
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "Words to search for."
+          },
+          "thread": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 10,
+            "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+          },
+          "author": {
+            "type": "string",
+            "format": "did"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 25
+          },
+          "cursor": {
+            "type": "string"
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "hits"
+          ],
+          "properties": {
+            "hits": {
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "dev.atmoboard.defs#postHit"
+              }
+            },
+            "cursor": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.getPostHistory",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Every version of a post the appview has seen, oldest first.",
+      "parameters": {
+        "type": "params",
+        "required": [
+          "key"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 10,
+            "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "revisions"
+          ],
+          "properties": {
+            "revisions": {
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "dev.atmoboard.defs#revisionView"
+              }
+            }
+          }
+        }
+      },
+      "errors": [
+        {
+          "name": "NotFound"
+        }
+      ]
+    }
+  }
+}

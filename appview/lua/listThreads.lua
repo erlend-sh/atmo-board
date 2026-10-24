@@ -39,6 +39,12 @@ function handle()
     table.insert(args, table.concat(visible, ","))
     table.insert(where, "i.parent_key = ANY(string_to_array($" .. #args .. ", ','))")
   end
+  if caller_did and not params.parent then
+    -- Muted threads stay in their channel's list but leave Latest and Unread.
+    table.insert(args, caller_did)
+    table.insert(where, "NOT EXISTS (SELECT 1 FROM ab_follows f WHERE f.did = $" .. #args ..
+      " AND f.thread_key = i.key AND f.level = 'muted')")
+  end
   if params.sort == "unread" then
     -- Threads the viewer hasn't seen, or has unread posts in.
     if not caller_did then return { threads = toarray({}), changeCursor = change_cursor() } end

@@ -28,7 +28,7 @@ function handle()
   local posts = {}
   if has_opening and lo <= 1 then table.insert(posts, opening_post_view(thread, caller_did)) end
   local rows = exec("SELECT " .. ITEM_COLS .. ITEM_FROM ..
-    " WHERE i.kind = 'post' AND i.thread_key = $1 AND NOT i.deleted AND i.number BETWEEN $2 AND $3 ORDER BY i.number",
+    " WHERE i.kind = 'post' AND i.thread_key = $1 AND i.number BETWEEN $2 AND $3 ORDER BY i.number",
     P(thread.key, lo, hi))
   for _, row in ipairs(rows) do
     if not truthy(row.hidden) or perms.moderate then table.insert(posts, post_view(row, caller_did)) end

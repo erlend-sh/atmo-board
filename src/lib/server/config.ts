@@ -18,6 +18,10 @@ export const config = {
   get forumDid() { return required('ATMOBOARD_FORUM_DID'); },
   /** Signs the browser's own session cookie. */
   get cookieSecret() { return required('ATMOBOARD_COOKIE_SECRET'); },
+  /** The public URL people use, e.g. https://forum.example. OAuth redirects come back here. */
+  get appUrl() { return (env.ATMOBOARD_APP_URL ?? 'http://127.0.0.1:5173').replace(/\/+$/, ''); },
+  /** Persistent directory for OAuth transactions and HappyView session keys. */
+  get dataDir() { return env.DATA_DIR ?? 'data'; },
   /** Local demos only: lets anyone sign in as any member without a PDS. */
   get devLogin() { return env.ATMOBOARD_DEV_LOGIN === '1'; },
 };

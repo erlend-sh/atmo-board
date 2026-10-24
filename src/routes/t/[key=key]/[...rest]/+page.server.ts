@@ -4,6 +4,7 @@ import { api } from '$lib/server/hv';
 import { actionFailure, pageError } from '$lib/server/errors';
 import type { ThreadPage } from '$lib/types';
 import { channelHref, threadHref } from '$lib/names';
+import { postActions } from '$lib/server/postActions';
 
 // /t/{key}/{slug}, /t/{key}/{slug}/{n} and /t/{key}/{slug}/last. The key is
 // the identity; the slug is decorative, may be missing (/t/{key}/{n} works),
@@ -37,6 +38,7 @@ export const load: PageServerLoad = async ({ locals, params, url }) => {
 };
 
 export const actions: Actions = {
+  ...postActions,
   reply: async ({ locals, params, request }) => {
     const form = await request.formData();
     const text = String(form.get('text') ?? '').trim();

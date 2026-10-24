@@ -98,6 +98,30 @@ CREATE TABLE IF NOT EXISTS ab_changes (
   at         timestamptz NOT NULL DEFAULT now()
 );
 
+-- Earlier versions of edited posts (edit history). Version 1 is the
+-- original; the current text lives in ab_items. Dropped on author delete.
+CREATE TABLE IF NOT EXISTS ab_revisions (
+  key        text NOT NULL,
+  version    int  NOT NULL,
+  title      text,
+  text       text,
+  content    jsonb,
+  created_at text NOT NULL,
+  PRIMARY KEY (key, version)
+);
+
+-- Per-member thread notification level: watching, normal (no row) or muted.
+CREATE TABLE IF NOT EXISTS ab_follows (
+  did        text NOT NULL,
+  thread_key text NOT NULL,
+  level      text NOT NULL CHECK (level IN ('watching', 'muted')),
+  PRIMARY KEY (did, thread_key)
+);
+
+ALTER TABLE ab_items ADD COLUMN IF NOT EXISTS edit_count int NOT NULL DEFAULT 0;
+CREATE INDEX IF NOT EXISTS ab_items_search ON ab_items
+  USING gin (to_tsvector('simple', coalesce(title, '') || ' ' || coalesce(text, '')));
+
 -- Removed columns (kept as drops so existing databases converge).
 ALTER TABLE ab_items DROP COLUMN IF EXISTS resolved;
 
