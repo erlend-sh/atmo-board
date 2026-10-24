@@ -4,7 +4,7 @@ import { api, publishTrust } from '$lib/server/hv';
 import { actionFailure, pageError } from '$lib/server/errors';
 import type { ThreadPage, ThreadView } from '$lib/types';
 import { channelHref, threadHref } from '$lib/names';
-import { postActions } from '$lib/server/postActions';
+import { createThread, postActions } from '$lib/server/postActions';
 
 // A channel is a thread with a sidebar entry. Its own posts are the untitled
 // chat, at /c/{key}/{slug}/chat and titled "{channel}/chat"; its child
@@ -48,16 +48,5 @@ export const actions: Actions = {
       });
     } catch (e) { return actionFailure(e); }
   },
-  thread: async ({ locals, params, request }) => {
-    const form = await request.formData();
-    const title = String(form.get('title') ?? '').trim();
-    const text = String(form.get('text') ?? '').trim();
-    let created: { key: string; slug: string };
-    try {
-      created = await api(locals.viewer).procedure('createThread', {
-        parent: params.key, title, textContent: text, content: { $type: 'dev.atmoboard.defs#markdown', text },
-      });
-    } catch (e) { return actionFailure(e); }
-    redirect(303, threadHref(created));
-  },
+  thread: (e) => createThread(e, e.params.key),
 };

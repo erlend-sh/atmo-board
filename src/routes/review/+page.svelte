@@ -1,4 +1,5 @@
 <script lang="ts">
+  import TopBar from '$lib/components/TopBar.svelte';
   import { enhance } from '$app/forms';
   import Avatar from '$lib/components/Avatar.svelte';
   import { age, fullDate } from '$lib/time';
@@ -11,17 +12,15 @@
 
 <svelte:head><title>Review · {data.forum.name}</title></svelte:head>
 
+<TopBar icon="review" title="review" description="Posts members have flagged. Agreeing hides the post; disagreeing lifts a hide the flags caused.">
+  {#snippet pills()}
+    <nav class="pills" aria-label="Show">
+      <a class:on={data.status === 'open'} href="/review">Open</a>
+      <a class:on={data.status === 'all'} href="/review?status=all">All</a>
+    </nav>
+  {/snippet}
+</TopBar>
 <div class="page">
-  <div class="page-head">
-    <div class="grow">
-      <h1>Review</h1>
-      <p>Posts members have flagged. Agreeing hides the post; disagreeing lifts a hide the flags caused.</p>
-    </div>
-  </div>
-  <div class="pills">
-    <a class="pill" class:on={data.status === 'open'} href="/review">Open</a>
-    <a class="pill" class:on={data.status === 'all'} href="/review?status=all">All</a>
-  </div>
 
   {#if data.items.length === 0}
     <p class="empty">{data.status === 'open' ? 'Nothing waiting. The queue is empty.' : 'Nothing has been flagged yet.'}</p>
@@ -75,8 +74,7 @@
 </div>
 
 <style>
-  .page-head p { max-width: 60ch; }
-  .queue { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 14px; }
+  .queue { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
   .queue > li { border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; background: var(--surface); }
   .post { display: flex; gap: 10px; }
   .main { min-width: 0; flex: 1; }

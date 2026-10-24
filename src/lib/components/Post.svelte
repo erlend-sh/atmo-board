@@ -58,8 +58,11 @@
         <a class="name" href="/u/{post.author.handle ?? post.author.did}">{displayName(post.author)}</a>
         {#if staff}<span class="badge">staff</span>{/if}
         {#if post.replyTo && post.replyTo > 1}<a class="reply-to" href="{threadHref}/{post.replyTo}">↩ #{post.replyTo}</a>{/if}
-        {#if post.editCount}<button class="edited" onclick={showHistory} title="Show edit history">edited</button>{/if}
-        <a class="when" href="/p/{post.key}" data-sveltekit-reload title={fullDate(post.createdAt)}>{age(post.createdAt)}</a>
+        <span class="right">
+          {#if post.editCount}<button class="edited" onclick={showHistory} title="Show edit history">edited</button>{/if}
+          <!-- Posts aren't numbered on screen; the time is the permalink. -->
+          <a class="when" href="/p/{post.key}" data-sveltekit-reload title={fullDate(post.createdAt)}>{age(post.createdAt)}</a>
+        </span>
       </header>
     {/if}
 
@@ -168,28 +171,30 @@
 </article>
 
 <style>
-  .post { position: relative; display: flex; gap: 12px; padding: 10px 0; }
+  .post { position: relative; display: flex; gap: 14px; padding: 10px 0; }
   .post.compact { padding-top: 2px; }
   .gutter { width: 40px; flex: none; }
   .main { min-width: 0; flex: 1; }
-  header { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 2px; }
+  header { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 3px; }
   .name { font-weight: 600; color: var(--text); }
-  .badge { font-size: 11px; padding: 0 6px; border-radius: 4px; background: var(--accent-soft); color: var(--accent); }
+  .name:hover { text-decoration: underline; }
+  .badge { font-size: 11px; font-weight: 500; letter-spacing: .03em; padding: 2px 7px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
   .when, .reply-to { color: var(--muted); font-size: 13px; }
-  .when { margin-left: auto; }
+  .when:hover, .reply-to:hover { color: var(--text); text-decoration: underline; }
+  .right { margin-left: auto; display: flex; gap: 10px; align-items: baseline; }
   .edited { background: none; border: 0; padding: 0; font: inherit; font-size: 12px; color: var(--muted); cursor: pointer; }
   .edited:hover { color: var(--accent); }
   .gone { color: var(--muted); font-style: italic; margin: 2px 0; }
   .reactions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; align-items: center; }
-  .reaction { font: inherit; font-size: 13px; padding: 1px 8px; border-radius: 12px; border: 1px solid transparent;
-    background: var(--surface-2); color: var(--text); cursor: pointer; }
+  .reaction { font: inherit; font-size: 13px; padding: 1px 9px; border-radius: 999px; border: 1px solid transparent;
+    background: var(--surface-2); color: var(--text-2); cursor: pointer; font-variant-numeric: tabular-nums; }
   .reaction:disabled { cursor: default; }
-  .reaction.mine { border-color: var(--accent); background: var(--accent-soft); }
+  .reaction.mine { background: var(--accent-soft); color: var(--accent-text); }
   .palette { display: flex; gap: 2px; padding: 2px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); }
   .palette button { background: none; border: 0; font-size: 16px; padding: 2px 5px; border-radius: 10px; cursor: pointer; }
   .palette button:hover { background: var(--surface-2); }
-  .actions { position: absolute; top: 4px; right: 0; display: flex; gap: 2px; padding: 2px; border-radius: 8px;
-    background: var(--surface); border: 1px solid var(--border); opacity: 0; pointer-events: none; }
+  .actions { position: absolute; top: -12px; right: 0; display: flex; gap: 2px; padding: 3px; border-radius: 8px;
+    background: var(--surface); border: 1px solid var(--border); box-shadow: 0 2px 8px var(--shadow); opacity: 0; pointer-events: none; }
   .post:hover .actions, .actions:focus-within { opacity: 1; pointer-events: auto; }
   @media (hover: none) { .actions { position: static; opacity: 1; pointer-events: auto; border: 0; align-self: flex-start; } }
   .actions button { background: none; border: 0; color: var(--muted); font: inherit; font-size: 13px; padding: 2px 8px;

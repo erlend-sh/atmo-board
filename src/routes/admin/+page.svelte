@@ -1,4 +1,5 @@
 <script lang="ts">
+  import TopBar from '$lib/components/TopBar.svelte';
   import { enhance } from '$app/forms';
   import Avatar from '$lib/components/Avatar.svelte';
   import { channelHref, displayName } from '$lib/names';
@@ -10,11 +11,12 @@
 
 <svelte:head><title>Admin · {data.forum.name}</title></svelte:head>
 
+<TopBar icon="shield" title="admin" description="Channels and members of {data.forum.name}.">
+  {#snippet actions()}
+    <button class="btn primary small" onclick={() => (adding = !adding)}>{adding ? 'Cancel' : 'New channel'}</button>
+  {/snippet}
+</TopBar>
 <div class="page">
-  <div class="page-head">
-    <div class="grow"><h1>Admin</h1><p>Channels and members of {data.forum.name}.</p></div>
-    <button class="btn primary" onclick={() => (adding = !adding)}>{adding ? 'Cancel' : 'New channel'}</button>
-  </div>
   {#if form?.message}<p class="error">{form.message}</p>{/if}
 
   {#if adding}

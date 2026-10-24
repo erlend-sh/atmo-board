@@ -47,6 +47,8 @@ To start over, run `docker compose down -v` and then `sh appview/demo.sh` again.
 
 Milestone 4 is the deployment: see [docs/deploy.md](docs/deploy.md) for Railway or self-hosted Compose.
 
+The interface takes Skyreader's look. Besides Index and the channels, the sidebar has pages that gather channels: **Working groups** and **Projects** (cards, plus one board of all their threads) and **Events** (upcoming events, then the event channels as tabs). Which sections and channels they gather, and which channels are pinned under MAIN, is set in `src/lib/directories.ts`.
+
 ## Moderation, trust levels and private channels
 
 Trust levels are Discourse's, and in the group model they're **roles**: the appview computes TL0 to TL3 from private signals (posts read, topics entered, days visited, likes given and received) and publishes the result as a `tl0`–`tl4` role on the member's `group.opensocial.membership`. TL4 is granted by staff, and any level staff set by hand is locked until they unlock it. A new member (TL0) is sandboxed: at most two links in a post. TL1 can flag, TL3 can rename and move threads, TL4 can also pin, lock and hide.
