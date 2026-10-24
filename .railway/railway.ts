@@ -21,7 +21,7 @@ const HAPPYVIEW_IMAGE = 'ghcr.io/gamesgamesgamesgamesgames/happyview:2.16.0';
 
 export default defineRailway((ctx) => {
   const prod = ctx.environment === 'production';
-  const host = prod ? 'atmoboard.dev' : `${ctx.environment}.atmoboard.dev`;
+  const host = prod ? 'atmosphere.community' : `${ctx.environment}.atmosphere.community`;
   const appUrl = `https://${host}`;
   const happyviewUrl = `https://hv.${host}`;
 
