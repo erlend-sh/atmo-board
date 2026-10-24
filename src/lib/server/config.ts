@@ -1,5 +1,8 @@
 import { env } from '$env/dynamic/private';
 
+/** The HappyView release this app's Lua scripts and spaces API target. */
+export const EXPECTED_HAPPYVIEW = '2.16.0';
+
 function required(name: string): string {
   const value = env[name];
   if (!value) throw new Error(`${name} is not set. See .env.example.`);
