@@ -1,6 +1,7 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { api, groupApi } from '$lib/server/hv';
+import { readHandle } from '$lib/server/session';
 import type { ForumView } from '$lib/types';
 
 // Joining an open forum: the group account writes the member's membership.
@@ -12,8 +13,8 @@ export const actions: Actions = {
     if (forum.joinPolicy !== 'open') error(403, 'This forum is invite only.');
     await groupApi().procedure('admin.addMember', {
       member: locals.viewer, roles: ['member'],
-      // Demo newcomers have no PDS profile to read a handle from.
-      handle: cookies.get('ab_dev_handle'),
+      // The handle they signed in with (verified against their DID document).
+      handle: readHandle(cookies),
     });
     redirect(303, request.headers.get('referer') ?? '/');
   },

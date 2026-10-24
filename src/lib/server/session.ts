@@ -27,4 +27,17 @@ export function writeSession(cookies: Cookies, did: string) {
 
 export function clearSession(cookies: Cookies) {
   cookies.delete(COOKIE, { path: '/' });
+  cookies.delete(HANDLE, { path: '/' });
+}
+
+// The handle someone signed in with, for their membership record when they
+// join. Only a display hint: identity is the signed DID above.
+const HANDLE = 'ab_handle';
+export const readHandle = (cookies: Cookies) => {
+  const h = cookies.get(HANDLE);
+  return h && /^[a-z0-9.-]{1,253}$/.test(h) ? h : undefined;
+};
+export function writeHandle(cookies: Cookies, handle: string | undefined) {
+  if (handle) cookies.set(HANDLE, handle, { path: '/', httpOnly: true, sameSite: 'lax', secure: !dev, maxAge: MAX_AGE });
+  else cookies.delete(HANDLE, { path: '/' });
 }

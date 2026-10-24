@@ -38,7 +38,7 @@
         <span class="who">{data.viewer.handle ?? data.viewer.did}</span>
         <form method="POST" action="/logout"><button class="link-btn">Sign out</button></form>
       {:else}
-        <a class="btn primary" href="/login">Sign in</a>
+        <a class="btn primary" href="/login?next={encodeURIComponent(page.url.pathname)}">Sign in</a>
       {/if}
     </div>
   </aside>

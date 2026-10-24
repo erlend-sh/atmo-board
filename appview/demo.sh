@@ -45,8 +45,11 @@ HAPPYVIEW_API_KEY=$(get HAPPYVIEW_API_KEY) sh appview/setup.sh
 
 if [ -z "$(get HAPPYVIEW_CLIENT_KEY)" ]; then
   echo "== registering the web app as an API client"
+  # Locally the OAuth client is atproto's loopback client: its client_id is
+  # this http://localhost URL, not a hosted metadata document.
+  loopback='http://localhost?redirect_uri=http%3A%2F%2F127.0.0.1%3A5173%2Foauth%2Fcallback&scope=atproto'
   client=$(curl -fsS -X POST "$HV/admin/api-clients" -H "Authorization: Bearer $(get HAPPYVIEW_API_KEY)" \
-    -H 'content-type: application/json' -d '{"name":"atmo-board web","client_id_url":"http://127.0.0.1:5173/oauth-client-metadata.json","client_uri":"http://127.0.0.1:5173","redirect_uris":["http://127.0.0.1:5173/oauth/callback"]}')
+    -H 'content-type: application/json' -d "{\"name\":\"atmo-board web\",\"client_id_url\":\"$loopback\",\"client_uri\":\"http://127.0.0.1:5173\",\"redirect_uris\":[\"http://127.0.0.1:5173/oauth/callback\"],\"scopes\":\"atproto\"}")
   put HAPPYVIEW_CLIENT_KEY "$(printf '%s' "$client" | jq -r .client_key)"
   put HAPPYVIEW_CLIENT_SECRET "$(printf '%s' "$client" | jq -r .client_secret)"
 fi
