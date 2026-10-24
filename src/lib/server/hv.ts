@@ -72,3 +72,9 @@ export function api(viewer: string | null) {
 
 /** The API as the group account, for admin procedures. */
 export const groupApi = () => api(config.forumDid);
+
+/** markRead reports a new trust level; only the group can publish it as a role. */
+export async function publishTrust(marked: { trustLevel?: number } | undefined, did: string | null) {
+  if (marked?.trustLevel === undefined || !did) return;
+  await groupApi().procedure('admin.syncMember', { member: did }).catch(() => {});
+}

@@ -4,7 +4,7 @@
   "defs": {
     "main": {
       "type": "procedure",
-      "description": "Record how far the viewer has read a thread. Private appview state; never written to a repo.",
+      "description": "Record how far the viewer has read a thread. Private appview state; never written to a repo. Reading also feeds the trust-level inputs, so a new level may come back.",
       "input": {
         "encoding": "application/json",
         "schema": {
@@ -44,6 +44,10 @@
             },
             "lastRead": {
               "type": "integer"
+            },
+            "trustLevel": {
+              "type": "integer",
+              "description": "Present when this read changed the viewer's level; call admin.syncMember to publish it."
             }
           }
         }

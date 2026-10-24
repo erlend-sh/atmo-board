@@ -29,7 +29,8 @@
               "unlock",
               "pin",
               "unpin",
-              "setTrustLevel"
+              "setTrustLevel",
+              "ban"
             ]
           },
           "toThread": {

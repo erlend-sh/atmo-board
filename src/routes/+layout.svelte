@@ -28,10 +28,19 @@
         {#each section.channels as ch (ch.key)}
           <a class="channel" class:active={current === ch.key} class:unread={(ch.unreadCount ?? 0) > 0 || ch.unreadChat} href={channelHref(ch)}>
             <span class="hash">{ch.icon ?? '#'}</span><span class="name">{ch.title}</span>
+            {#if ch.private}<span class="lock" title="Private channel">🔒</span>{/if}
           </a>
         {/each}
       {/each}
     </nav>
+    {#if data.viewer.permissions.moderate}
+      <nav class="staff">
+        <a class="link" class:active={page.url.pathname === '/review'} href="/review"><span class="name">Review</span></a>
+        {#if data.viewer.permissions.admin}
+          <a class="link" class:active={page.url.pathname.startsWith('/admin')} href="/admin"><span class="name">Admin</span></a>
+        {/if}
+      </nav>
+    {/if}
     <div class="me">
       {#if me}
         <Avatar author={me} size={28} />
@@ -62,9 +71,11 @@
   .channel:hover, .link:hover { background: var(--surface-2); text-decoration: none; }
   .active { background: var(--surface-2); color: var(--text); }
   .channel.unread { color: var(--text); font-weight: 600; }
+  .lock { font-size: 11px; opacity: .7; }
   .hash { width: 18px; text-align: center; color: var(--muted); }
   .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .badge { background: var(--accent); color: var(--on-accent); border-radius: 10px; padding: 0 7px; font-size: 12px; font-weight: 700; }
+  .staff { padding: 0 8px 8px; border-top: 1px solid var(--border); padding-top: 8px; }
   .me { display: flex; align-items: center; gap: 8px; padding: 12px; border-top: 1px solid var(--border); }
   .who { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; }
   .link-btn { background: none; border: 0; color: var(--muted); font: inherit; font-size: 13px; cursor: pointer; padding: 0; }

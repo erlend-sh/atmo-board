@@ -1,0 +1,68 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.resolveReport",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Staff close a review item: agreed, disagreed (which lifts a flag-caused hide) or ignored.",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "subject",
+            "status"
+          ],
+          "properties": {
+            "subject": {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 10,
+              "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+            },
+            "status": {
+              "type": "string",
+              "knownValues": [
+                "agreed",
+                "disagreed",
+                "ignored"
+              ]
+            }
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "subject",
+            "status"
+          ],
+          "properties": {
+            "subject": {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 10,
+              "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+            },
+            "status": {
+              "type": "string"
+            },
+            "resolved": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "errors": [
+        {
+          "name": "Forbidden"
+        },
+        {
+          "name": "NotFound"
+        }
+      ]
+    }
+  }
+}

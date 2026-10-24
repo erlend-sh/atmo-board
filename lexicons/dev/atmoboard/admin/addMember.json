@@ -27,6 +27,11 @@
               "type": "string",
               "format": "did"
             },
+            "trustLevel": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4
+            },
             "handle": {
               "type": "string"
             },

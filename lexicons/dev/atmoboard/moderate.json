@@ -1,0 +1,106 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.moderate",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Apply a curation or moderation decision as a forum-signed override. Group account only, on behalf of actor: TL3 renames and moves, TL4 also pins, locks and hides, staff also set trust levels.",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "actor",
+            "action",
+            "subject"
+          ],
+          "properties": {
+            "actor": {
+              "type": "string",
+              "format": "did"
+            },
+            "subject": {
+              "type": "string",
+              "description": "A thread or post key, or a member DID for setTrustLevel."
+            },
+            "action": {
+              "type": "string",
+              "knownValues": [
+                "move",
+                "rename",
+                "hide",
+                "unhide",
+                "lock",
+                "unlock",
+                "pin",
+                "unpin",
+                "setTrustLevel"
+              ]
+            },
+            "toThread": {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 10,
+              "description": "For move: the new parent."
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 3000,
+              "maxGraphemes": 300,
+              "description": "For rename."
+            },
+            "level": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4,
+              "description": "For setTrustLevel."
+            },
+            "locked": {
+              "type": "boolean",
+              "description": "For setTrustLevel: false lets automatic promotion resume."
+            },
+            "reason": {
+              "type": "string",
+              "maxLength": 10000,
+              "maxGraphemes": 1000
+            }
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "subject",
+            "action"
+          ],
+          "properties": {
+            "subject": {
+              "type": "string"
+            },
+            "action": {
+              "type": "string"
+            },
+            "uri": {
+              "type": "string",
+              "format": "at-uri"
+            }
+          }
+        }
+      },
+      "errors": [
+        {
+          "name": "Forbidden"
+        },
+        {
+          "name": "NotFound"
+        },
+        {
+          "name": "InvalidRequest"
+        }
+      ]
+    }
+  }
+}

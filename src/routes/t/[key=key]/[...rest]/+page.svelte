@@ -5,6 +5,7 @@
   import Poller from '$lib/components/Poller.svelte';
   import JoinNotice from '$lib/components/JoinNotice.svelte';
   import NotifyMenu from '$lib/components/NotifyMenu.svelte';
+  import ModMenu from '$lib/components/ModMenu.svelte';
   import { channelHref, threadHref } from '$lib/names';
   import { invalidate } from '$app/navigation';
   let { data } = $props();
@@ -16,6 +17,7 @@
   const first = $derived(p.posts[0]?.number ?? 1);
   const lastShown = $derived(p.posts.at(-1)?.number ?? 0);
   let replyTo = $state<{ key: string; number: number; name: string } | null>(null);
+  let whisper = $state(false);
 
   $effect(() => {
     const n = data.target;
@@ -33,11 +35,16 @@
   <div class="page-head">
     <div class="grow">
       <h1>
+        {#if t.state.pinned}<span title="Pinned">📌</span>{/if}
+        {#if t.state.hidden}<span title="Hidden from members">🚫</span>{/if}
         {#if t.state.locked}<span title="Locked">🔒</span>{/if}
         {t.title ?? 'Untitled'}
       </h1>
       {#if t.tags.length}<p>{#each t.tags as tag}<a class="tag" href="/tag/{tag}">{tag}</a> {/each}</p>{/if}
     </div>
+    {#if p.permissions.curate || p.permissions.manage}
+      <ModMenu thread={t} perms={p.permissions} channels={data.sections.flatMap((s) => s.channels)} />
+    {/if}
     {#if data.viewer.did}<NotifyMenu thread={t.key} level={t.notificationLevel} />{/if}
   </div>
   <JoinNotice viewer={data.viewer} />
@@ -46,7 +53,7 @@
   <section class="posts">
     {#each p.posts as post (post.key)}
       <div class="item" class:target={post.number === data.target}>
-        <Post {post} threadHref={base} viewer={data.viewer.did} canReact={p.permissions.reply}
+        <Post {post} threadHref={base} viewer={data.viewer.did} canReact={p.permissions.reply} perms={p.permissions}
           title={post.number === 1 ? t.title : undefined}
           deleteTo={post.number === 1 && p.channel ? channelHref(p.channel) : undefined}
           onreply={p.permissions.reply ? () => (replyTo = { key: post.number === 1 ? t.key : post.key, number: post.number, name: post.author.handle ?? 'post' }) : undefined} />
@@ -60,8 +67,13 @@
       {#if replyTo}
         <p class="replying">Replying to #{replyTo.number} ({replyTo.name}) <button onclick={() => (replyTo = null)}>✕</button></p>
       {/if}
-      <Composer action="?/reply" submit="Reply" placeholder="Reply to this thread. Markdown works."
-        hidden={replyTo ? { replyTo: replyTo.key } : {}} onposted={() => (replyTo = null)} />
+      <Composer action="?/reply" submit={whisper ? 'Whisper' : 'Reply'}
+        placeholder={whisper ? 'Staff-only note on this thread. Only staff see it.' : 'Reply to this thread. Markdown works.'}
+        hidden={{ ...(replyTo ? { replyTo: replyTo.key } : {}), ...(whisper ? { whisper: '1' } : {}) }}
+        onposted={() => (replyTo = null)} />
+      {#if p.permissions.moderate}
+        <label class="whisper"><input type="checkbox" bind:checked={whisper} /> Whisper (staff only)</label>
+      {/if}
     </div>
   {:else if t.state.locked}
     <p class="closed">This thread is locked.</p>
@@ -79,4 +91,5 @@
   .replying { margin: 0 0 6px; font-size: 13px; color: var(--muted); }
   .replying button { background: none; border: 0; color: var(--muted); cursor: pointer; }
   .closed { color: var(--muted); padding: 16px 0; }
+  .whisper { display: flex; align-items: center; gap: 6px; margin-top: 6px; color: var(--muted); font-size: 13px; }
 </style>

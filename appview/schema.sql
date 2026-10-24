@@ -122,6 +122,53 @@ ALTER TABLE ab_items ADD COLUMN IF NOT EXISTS edit_count int NOT NULL DEFAULT 0;
 CREATE INDEX IF NOT EXISTS ab_items_search ON ab_items
   USING gin (to_tsvector('simple', coalesce(title, '') || ' ' || coalesce(text, '')));
 
+-- Whispers: staff-only posts, written to the staff space. They take post
+-- numbers like any post; last_public is the highest number non-staff can see.
+ALTER TABLE ab_items ADD COLUMN IF NOT EXISTS whisper boolean NOT NULL DEFAULT false;
+ALTER TABLE ab_items ADD COLUMN IF NOT EXISTS last_public int NOT NULL DEFAULT 0;
+UPDATE ab_items t SET last_public = t.post_count
+  WHERE t.kind = 'thread' AND t.last_public = 0 AND t.post_count > 0
+    AND NOT EXISTS (SELECT 1 FROM ab_items w WHERE w.thread_key = t.key AND w.whisper);
+-- Who hid an item: 'staff' (an override) or 'flags' (community reports).
+ALTER TABLE ab_items ADD COLUMN IF NOT EXISTS hidden_by text;
+
+-- Overrides the group has applied (move, rename, hide, lock, pin, trust
+-- levels): the moderation log. The records themselves live in the main space.
+CREATE TABLE IF NOT EXISTS ab_overrides (
+  uri         text PRIMARY KEY,
+  subject     text NOT NULL,
+  action      text NOT NULL,
+  actor       text,
+  reason      text,
+  detail      jsonb,
+  created_at  text NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ab_overrides_subject ON ab_overrides (subject, created_at);
+
+-- Reports (Discourse flags). Private host state, as in the opensocial
+-- proposal's moderation queue: one row per reporter per subject.
+CREATE TABLE IF NOT EXISTS ab_reports (
+  subject_key text NOT NULL,
+  reporter    text NOT NULL,
+  reason      text NOT NULL,
+  note        text,
+  status      text NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'agreed', 'disagreed', 'ignored')),
+  created_at  text NOT NULL,
+  resolved_by text,
+  resolved_at text,
+  PRIMARY KEY (subject_key, reporter)
+);
+
+-- Private trust-level inputs, per member per day: Discourse's days visited,
+-- posts read and topics entered. Never published; only the level is.
+CREATE TABLE IF NOT EXISTS ab_activity (
+  did            text NOT NULL,
+  day            date NOT NULL DEFAULT current_date,
+  posts_read     int NOT NULL DEFAULT 0,
+  topics_entered int NOT NULL DEFAULT 0,
+  PRIMARY KEY (did, day)
+);
+
 -- Removed columns (kept as drops so existing databases converge).
 ALTER TABLE ab_items DROP COLUMN IF EXISTS resolved;
 

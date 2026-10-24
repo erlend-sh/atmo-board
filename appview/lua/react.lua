@@ -5,7 +5,9 @@ function handle()
   if not member_row(caller_did) then return fail("Forbidden", "join the forum to react") end
   local item = get_item(input.post)
   if not item then return fail("NotFound", "no such post") end
-  if not permissions(caller_did, channel_of(item)).reply then return fail("Forbidden", "you can't react here") end
+  local perms = permissions(caller_did, channel_of(item))
+  if not perms.reply or (truthy(item.whisper) and not perms.moderate) then return fail("Forbidden", "you can't react here") end
+  if truthy(item.hidden) then return fail("Forbidden", "this post is hidden") end
   local emoji = input.emoji
   if not emoji or emoji == "" then return fail("InvalidRequest", "emoji is required") end
   local existing = one("SELECT uri FROM ab_reactions WHERE post_key = $1 AND author = $2 AND emoji = $3",

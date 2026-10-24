@@ -1,0 +1,52 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.admin.syncMember",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Recompute a member's trust level and republish their membership roles and space access. Group account only.",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "member"
+          ],
+          "properties": {
+            "member": {
+              "type": "string",
+              "format": "did"
+            }
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "member",
+            "trustLevel"
+          ],
+          "properties": {
+            "member": {
+              "type": "string",
+              "format": "did"
+            },
+            "trustLevel": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "errors": [
+        {
+          "name": "Forbidden"
+        },
+        {
+          "name": "NotFound"
+        }
+      ]
+    }
+  }
+}

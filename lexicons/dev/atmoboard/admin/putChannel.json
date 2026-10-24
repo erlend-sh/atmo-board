@@ -48,6 +48,18 @@
             "position": {
               "type": "integer",
               "minimum": 0
+            },
+            "private": {
+              "type": "boolean",
+              "description": "Create the channel in its own space, readable only by its access list. Can't be changed later."
+            },
+            "access": {
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "dev.atmoboard.defs#channelAccess"
+              },
+              "description": "Replaces the channel's access rows."
             }
           }
         }

@@ -10,7 +10,7 @@ function handle()
   end
   if #visible == 0 then return { hits = toarray({}) } end
   local where, args = {
-    "NOT i.deleted", "NOT i.hidden",
+    "NOT i.deleted", "NOT i.hidden", viewer_is_staff(caller_did) and "true" or "NOT i.whisper",
     "(i.kind = 'post' OR (i.kind = 'thread' AND coalesce(i.text, '') <> ''))",
   }, { table.concat(visible, ",") }
   local q = params.q and params.q:match("^%s*(.-)%s*$") or ""

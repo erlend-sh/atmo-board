@@ -1,6 +1,6 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { api } from '$lib/server/hv';
+import { api, publishTrust } from '$lib/server/hv';
 import { actionFailure, pageError } from '$lib/server/errors';
 import type { ThreadPage } from '$lib/types';
 import { channelHref, threadHref } from '$lib/names';
@@ -31,7 +31,8 @@ export const load: PageServerLoad = async ({ locals, params, url }) => {
   const last = page.posts.at(-1)?.number;
   let marked = false;
   if (locals.viewer && last && last > (t.lastReadNumber ?? 0)) {
-    marked = await hv.procedure('markRead', { thread: t.key, number: last }).then(() => true, () => false);
+    marked = await hv.procedure<{ trustLevel?: number }>('markRead', { thread: t.key, number: last })
+      .then((r) => (publishTrust(r, locals.viewer), true), () => false);
   }
   const target = n === 'last' ? t.postCount : n ? Number(n) : anchor === 'first_unread' && (t.lastReadNumber ?? 0) > 0 ? (t.lastReadNumber ?? 0) + 1 : undefined;
   return { page, target, marked, changeCursor: page.changeCursor };
@@ -47,6 +48,7 @@ export const actions: Actions = {
     try {
       await api(locals.viewer).procedure('createPost', {
         thread: params.key, replyTo, textContent: text, content: { $type: 'dev.atmoboard.defs#markdown', text },
+        whisper: form.get('whisper') === '1' || undefined,
       });
     } catch (e) { return actionFailure(e); }
   },

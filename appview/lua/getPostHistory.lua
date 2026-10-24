@@ -3,7 +3,7 @@ function handle()
   local item = get_item(params.key)
   if not item or truthy(item.deleted) then return fail("NotFound", "no such post") end
   local perms = permissions(caller_did, channel_of(item))
-  if not perms.see or (truthy(item.hidden) and not perms.moderate) then return fail("NotFound", "no such post") end
+  if not perms.see or (truthy(item.hidden) and not perms.manage) or (truthy(item.whisper) and not perms.moderate) then return fail("NotFound", "no such post") end
   local out = {}
   local function view(r, version, current)
     local v = { version = version, textContent = r.text or "", createdAt = r.created_at, current = current or nil }

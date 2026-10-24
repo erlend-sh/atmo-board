@@ -18,6 +18,7 @@
   // Most recent chat posters first, for the chat row's participants.
   const chatPeople = $derived([...new Map(data.chat.posts.toReversed().map((p) => [p.author.did, p.author])).values()].slice(0, 5));
   let composing = $state(false);
+  let whisper = $state(false);
   let chatEnd: HTMLElement | undefined = $state();
   $effect(() => { data.chat.posts.length; if (data.view === 'chat') chatEnd?.scrollIntoView({ block: 'end' }); });
 </script>
@@ -58,12 +59,20 @@
       {#if data.chat.hasBefore}<p class="more">Showing the latest {data.chat.posts.length} messages.</p>{/if}
       {#if data.chat.posts.length === 0}<p class="empty">No messages yet. Say hello.</p>{/if}
       {#each grouped(data.chat.posts) as { post, compact } (post.key)}
-        <Post {post} {compact} threadHref={base} viewer={data.viewer.did} canReact={data.chat.permissions.reply} />
+        <Post {post} {compact} threadHref={base} viewer={data.viewer.did}
+          canReact={data.chat.permissions.reply} perms={data.chat.permissions} />
       {/each}
       <div bind:this={chatEnd}></div>
     </section>
     {#if data.chat.permissions.reply}
-      <div class="dock"><Composer action="?/chat" placeholder="Message {ch?.title ?? ''}/chat" /></div>
+      <div class="dock">
+        <Composer action="?/chat" submit={whisper ? 'Whisper' : 'Send'}
+          placeholder={whisper ? 'Staff-only note in this chat' : `Message ${ch?.title ?? ''}/chat`}
+          hidden={whisper ? { whisper: '1' } : {}} />
+        {#if data.chat.permissions.moderate}
+          <label class="whisper"><input type="checkbox" bind:checked={whisper} /> Whisper (staff only)</label>
+        {/if}
+      </div>
     {/if}
   {/if}
 </div>
@@ -73,5 +82,6 @@
   .new-thread { padding: 12px 0 16px; border-bottom: 1px solid var(--border); }
   .chat { padding-bottom: 8px; }
   .more, .empty { color: var(--muted); font-size: 14px; }
+  .whisper { display: flex; align-items: center; gap: 6px; margin-top: 6px; color: var(--muted); font-size: 13px; }
   .dock { position: sticky; bottom: 0; padding: 12px 0 16px; background: linear-gradient(transparent, var(--bg) 30%); }
 </style>

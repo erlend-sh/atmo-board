@@ -1,5 +1,5 @@
 // Views returned by the dev.atmoboard.* API (see lexicons/dev/atmoboard/defs.json).
-export interface Permissions { see: boolean; reply: boolean; create: boolean; moderate?: boolean; admin?: boolean }
+export interface Permissions { see: boolean; reply: boolean; create: boolean; flag?: boolean; curate?: boolean; manage?: boolean; moderate?: boolean; admin?: boolean }
 export interface Author { did: string; handle?: string; displayName?: string; avatar?: string; roles: string[]; trustLevel?: number }
 export interface ThreadState { locked: boolean; pinned: boolean; hidden: boolean }
 export interface Markdown { $type: 'dev.atmoboard.defs#markdown'; text: string }
@@ -18,7 +18,7 @@ export interface Reaction { emoji: string; count: number; viewer?: boolean }
 export interface PostView {
   key: string; uri: string; number: number; thread: string; author: Author; textContent: string; content?: Markdown;
   replyTo?: number; reactions?: Reaction[]; createdAt: string; updatedAt?: string; hidden?: boolean;
-  editCount?: number; deleted?: boolean;
+  editCount?: number; deleted?: boolean; whisper?: boolean; hiddenBy?: 'staff' | 'flags';
 }
 export interface ForumView { did: string; name: string; description?: string; joinPolicy: string }
 export interface ViewerState { did?: string; handle?: string; member: boolean; roles: string[]; trustLevel?: number; permissions: Permissions }
@@ -28,3 +28,9 @@ export interface ThreadPage {
 }
 export interface RevisionView { version: number; title?: string; textContent: string; content?: Markdown; createdAt: string; current?: boolean }
 export interface PostHit { post: PostView; thread: ThreadView }
+export interface ReportView {
+  reporter: Author; reason: string; note?: string; status: 'open' | 'agreed' | 'disagreed' | 'ignored';
+  createdAt: string; resolvedBy?: string; resolvedAt?: string;
+}
+export interface ReviewItem { subject: string; post: PostView; thread?: ThreadView; reports: ReportView[] }
+export interface ChannelAccess { group: string; level: 'see' | 'reply' | 'create' }
