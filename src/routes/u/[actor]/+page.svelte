@@ -1,4 +1,5 @@
 <script lang="ts">
+  import TopBar from '$lib/components/TopBar.svelte';
   import Avatar from '$lib/components/Avatar.svelte';
   import { displayName } from '$lib/names';
   let { data } = $props();
@@ -7,6 +8,7 @@
 
 <svelte:head><title>{displayName(m)} · {data.forum.name}</title></svelte:head>
 
+<TopBar title={displayName(m)} />
 <div class="page">
   <div class="head">
     <Avatar author={m} size={72} />
@@ -21,7 +23,7 @@
 
 <style>
   .head { display: flex; gap: 18px; align-items: center; }
-  h1 { font-size: 24px; }
+  h1 { font-size: 20px; font-weight: 600; }
   p { margin: 2px 0 0; color: var(--muted); }
   a { color: var(--accent); }
   .roles { display: flex; gap: 6px; margin-top: 8px; }

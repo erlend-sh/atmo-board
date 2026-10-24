@@ -1,4 +1,5 @@
 <script lang="ts">
+  import TopBar from '$lib/components/TopBar.svelte';
   import Avatar from '$lib/components/Avatar.svelte';
   import { displayName } from '$lib/names';
   let { data, form } = $props();
@@ -6,6 +7,7 @@
 
 <svelte:head><title>Sign in · {data.forum.name}</title></svelte:head>
 
+<TopBar title="sign in" />
 <div class="page narrow">
   <h1>Sign in to {data.forum.name}</h1>
   <p class="muted">Use your atproto account: a Bluesky handle, or one from any other PDS.</p>
@@ -41,7 +43,7 @@
 
 <style>
   .narrow { max-width: 520px; }
-  h1 { font-size: 24px; margin-bottom: 8px; }
+  h1 { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
   h2 { font-size: 16px; margin: 28px 0 10px; }
   .muted { color: var(--muted); }
   .members { display: grid; gap: 6px; margin-top: 16px; }

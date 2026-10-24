@@ -1,6 +1,7 @@
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { api } from '$lib/server/hv';
 import { channelIndex } from '$lib/server/channels';
+import { createThread } from '$lib/server/postActions';
 import type { ThreadView } from '$lib/types';
 
 export const load: PageServerLoad = async ({ locals, parent, url }) => {
@@ -11,3 +12,5 @@ export const load: PageServerLoad = async ({ locals, parent, url }) => {
   ]);
   return { threads: list.threads, changeCursor: list.changeCursor, channels: channelIndex(sections), sort };
 };
+
+export const actions: Actions = { thread: (e) => createThread(e) };

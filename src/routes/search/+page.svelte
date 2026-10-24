@@ -1,8 +1,10 @@
 <script lang="ts">
+  import TopBar from '$lib/components/TopBar.svelte';
   import { page } from '$app/state';
   import Avatar from '$lib/components/Avatar.svelte';
   import { age, fullDate } from '$lib/time';
   import { channelHref, displayName, threadHref } from '$lib/names';
+  import { channelLabel } from '$lib/directories';
   import type { PostHit } from '$lib/types';
   let { data } = $props();
   const channels = $derived(new Map(data.sections.flatMap((s) => s.channels).map((c) => [c.key, c])));
@@ -20,7 +22,7 @@
   }
   function where(hit: PostHit) {
     const t = hit.thread;
-    if (t.isChannel) return { href: `/p/${hit.post.key}`, label: `${channels.get(t.key)?.title ?? t.title}/chat`, channel: channels.get(t.key) };
+    if (t.isChannel) return { href: `/p/${hit.post.key}`, label: `${channelLabel(channels.get(t.key) ?? { title: t.title ?? '' })}/chat`, channel: channels.get(t.key) };
     return { href: threadHref(t, hit.post.number > 1 ? hit.post.number : undefined), label: t.title ?? 'Untitled', channel: t.parent ? channels.get(t.parent) : undefined };
   }
   const more = $derived.by(() => {
@@ -32,8 +34,8 @@
 
 <svelte:head><title>{data.q ? `${data.q} · ` : ''}Search · {data.forum.name}</title></svelte:head>
 
+<TopBar icon="search" title="search" />
 <div class="page">
-  <div class="page-head"><div class="grow"><h1>Search</h1></div></div>
   <form class="search" method="GET" action="/search" data-sveltekit-keepfocus>
     <input type="search" name="q" value={data.q} placeholder="Search posts and chat" aria-label="Search" />
     {#each ['author', 'thread'] as k}
@@ -57,7 +59,7 @@
             <div class="main">
               <div class="top">
                 <a class="title" href={w.href} data-sveltekit-reload={hit.thread.isChannel ? '' : undefined}>{w.label}</a>
-                {#if w.channel && !hit.thread.isChannel}<a class="chan" href={channelHref(w.channel)}>{w.channel.icon ?? '#'} {w.channel.title}</a>{/if}
+                {#if w.channel && !hit.thread.isChannel}<a class="chan" href={channelHref(w.channel)}>{w.channel.icon ?? '#'} {channelLabel(w.channel)}</a>{/if}
                 <span class="when" title={fullDate(hit.post.createdAt)}>{age(hit.post.createdAt)}</span>
               </div>
               <p class="text"><span class="who">{displayName(hit.post.author)}:</span> {@html snippet(hit.post.textContent, data.q)}</p>

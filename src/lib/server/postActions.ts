@@ -1,4 +1,5 @@
 import { redirect, type RequestEvent } from '@sveltejs/kit';
+import { threadHref } from '$lib/names';
 import { api, groupApi } from './hv';
 import { actionFailure } from './errors';
 
@@ -41,3 +42,17 @@ export const postActions = {
   notify: (e: RequestEvent) => run(e, (f, hv) =>
     hv.procedure('setThreadNotification', { thread: str(f, 'thread'), level: str(f, 'level') })),
 };
+
+/** New thread in the channel the form picked (pages that span channels). */
+export async function createThread(e: RequestEvent, parent?: string) {
+  const form = await e.request.formData();
+  const title = str(form, 'title');
+  const text = str(form, 'text');
+  let created: { key: string; slug: string };
+  try {
+    created = await api(e.locals.viewer).procedure('createThread', {
+      parent: parent ?? str(form, 'parent'), title, textContent: text, content: md(text),
+    });
+  } catch (err) { return actionFailure(err); }
+  redirect(303, threadHref(created));
+}
