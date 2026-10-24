@@ -1,0 +1,32 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.0
+      - run: bun install --frozen-lockfile
+      - name: Types and Svelte
+        run: bun run check
+      - name: Lexicons are generated, not hand-edited
+        run: |
+          python3 scripts/lexicons.py
+          git diff --exit-code lexicons/
+      - name: Shell scripts parse
+        run: for f in appview/*.sh; do sh -n "$f"; done
+      - name: The release bundle is valid
+        run: |
+          set -a
+          POSTGRES_PASSWORD=x HAPPYVIEW_PUBLIC_URL=https://hv.example HAPPYVIEW_SESSION_SECRET=x \
+          TOKEN_ENCRYPTION_KEY=x HAPPYVIEW_CLIENT_KEY=x ATMOBOARD_APP_URL=https://example \
+          ATMOBOARD_FORUM_DID=did:plc:x ATMOBOARD_COOKIE_SECRET=x HAPPYVIEW_API_KEY=x \
+          docker compose -f infra/release/compose.yml config > /dev/null
+      - name: The app image builds
+        run: docker build -t atmo-board:ci .

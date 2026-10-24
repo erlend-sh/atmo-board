@@ -1,0 +1,30 @@
+# Posts the Railway plan on pull requests, and applies it on merge.
+# Until a RAILWAY_TOKEN secret exists, the job says so and passes.
+name: Railway
+on:
+  pull_request:
+    paths: ['.railway/**', 'infra/**', 'Dockerfile']
+  push:
+    branches: [main]
+    paths: ['.railway/**', 'infra/**', 'Dockerfile']
+
+jobs:
+  config:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+    steps:
+      - if: env.RAILWAY_TOKEN == ''
+        run: echo "::notice::No RAILWAY_TOKEN secret yet, so there is no Railway plan to show."
+      - if: env.RAILWAY_TOKEN != ''
+        uses: actions/checkout@v5
+      - if: env.RAILWAY_TOKEN != ''
+        uses: railwayapp/config@v1
+        with:
+          # A project token for the environment this branch deploys to.
+          railway-token: ${{ env.RAILWAY_TOKEN }}
+          # Only a merge changes anything; a pull request just shows the plan.
+          command: ${{ github.event_name == 'push' && 'apply' || 'plan' }}

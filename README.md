@@ -36,6 +36,7 @@ To start over, run `docker compose down -v` and then `sh appview/demo.sh` again.
 | `appview/setup.sh` | Idempotent HappyView configuration; run after every deploy |
 | `appview/demo.sh`, `seed-dev.mjs` | The local demo |
 | `src/` | The SvelteKit web app |
+| `infra/`, `Dockerfile`, `.railway/` | The release stack: Compose bundle, app image, Caddy edge, Railway IaC |
 | `src/lib/server/oauth/` | atproto OAuth through `@happyview/oauth-client-node`, ported from atmoBB |
 
 ## Status
@@ -44,7 +45,7 @@ To start over, run `docker compose down -v` and then `sh appview/demo.sh` again.
 - Milestone 2: reactions, edits with history, author deletes, search (`/search`, narrowable by member or thread), watching and muting threads and channels, and atproto OAuth sign-in.
 - Milestone 3: trust levels, moderation, and private spaces (below).
 
-Next: a Railway deployment.
+Milestone 4 is the deployment: see [docs/deploy.md](docs/deploy.md) for Railway or self-hosted Compose.
 
 ## Moderation, trust levels and private channels
 

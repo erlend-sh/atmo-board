@@ -1,0 +1,31 @@
+# HappyView's public edge. Railway's own edge can't block a path, and
+# HappyView's /admin API must never be reachable from the internet: it holds
+# operator keys, lexicons and scripts. Everything else has to be public,
+# because OAuth, the PDS service proxy and spaces all need a public hostname.
+{
+	admin off
+	servers {
+		trusted_proxies static private_ranges
+	}
+}
+
+:{$PORT:8080} {
+	log {
+		output stdout
+		format console
+	}
+
+	# Same as atmoBB's release Caddyfile: nothing under /admin leaks.
+	handle /admin* {
+		respond 404
+	}
+
+	handle {
+		reverse_proxy {$HAPPYVIEW_INTERNAL_URL:http://happyview.railway.internal:3000} {
+			header_up X-Forwarded-Host {host}
+			transport http {
+				read_timeout 120s
+			}
+		}
+	}
+}

@@ -1,0 +1,99 @@
+# The reference self-hosting stack: the same four services as the Railway
+# deployment, for anyone hosting somewhere else. Copy .env.release.example to
+# .env, fill it in, then:
+#
+#   docker compose -f infra/release/compose.yml up -d
+#   docker compose -f infra/release/compose.yml run --rm setup
+#
+# The edge publishes HappyView at HAPPYVIEW_PUBLIC_URL with /admin blocked.
+# Put your own TLS terminator (or Caddy with a real domain) in front of both
+# published ports.
+name: atmo-board
+
+services:
+  postgres:
+    image: postgres:17
+    # HappyView's main and backfill pools can exceed the default 100.
+    command: ["postgres", "-c", "max_connections=200"]
+    environment:
+      POSTGRES_USER: happyview
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+      POSTGRES_DB: happyview
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U happyview"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  happyview:
+    # Pinned: the Lua scripts target this release's spaces API. Bumping it
+    # means backing up Postgres first, because migrations are forward-only.
+    image: ghcr.io/gamesgamesgamesgamesgames/happyview:2.16.0
+    environment:
+      DATABASE_URL: postgres://happyview:${POSTGRES_PASSWORD}@postgres/happyview
+      PUBLIC_URL: ${HAPPYVIEW_PUBLIC_URL:?set HAPPYVIEW_PUBLIC_URL, e.g. https://hv.example.org}
+      SESSION_SECRET: ${HAPPYVIEW_SESSION_SECRET:?at least 32 bytes}
+      TOKEN_ENCRYPTION_KEY: ${TOKEN_ENCRYPTION_KEY:?openssl rand -base64 32}
+      RELAY_URL: ${RELAY_URL:-https://relay1.us-east.bsky.network}
+      PORT: 3000
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  edge:
+    build: ../edge
+    environment:
+      PORT: 8080
+      HAPPYVIEW_INTERNAL_URL: http://happyview:3000
+    ports:
+      - "${EDGE_PORT:-8080}:8080"
+    depends_on:
+      - happyview
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ../..
+    environment: &web_env
+      HAPPYVIEW_URL: http://happyview:3000
+      HAPPYVIEW_SESSION_SECRET: ${HAPPYVIEW_SESSION_SECRET}
+      HAPPYVIEW_CLIENT_KEY: ${HAPPYVIEW_CLIENT_KEY:?register the OAuth API client first}
+      HAPPYVIEW_CLIENT_SECRET: ${HAPPYVIEW_CLIENT_SECRET:-}
+      ATMOBOARD_APP_URL: ${ATMOBOARD_APP_URL:?set ATMOBOARD_APP_URL, e.g. https://forum.example.org}
+      ATMOBOARD_FORUM_DID: ${ATMOBOARD_FORUM_DID:?the group account DID}
+      ATMOBOARD_COOKIE_SECRET: ${ATMOBOARD_COOKIE_SECRET:?openssl rand -hex 32}
+      DATA_DIR: /data
+      PGHOST: postgres
+      PGUSER: happyview
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: happyview
+    volumes:
+      - oauthdata:/data
+    ports:
+      - "${WEB_PORT:-3001}:3000"
+    depends_on:
+      happyview:
+        condition: service_started
+    restart: unless-stopped
+
+  # Run after every upgrade, before the web app serves: installs the
+  # lexicons, Lua endpoints and derived tables. Same image as web.
+  setup:
+    build:
+      context: ../..
+    environment:
+      <<: *web_env
+      HAPPYVIEW_API_KEY: ${HAPPYVIEW_API_KEY:?run appview/bootstrap-admin.sh once}
+    command: ["sh", "appview/container-setup.sh"]
+    depends_on:
+      happyview:
+        condition: service_started
+    restart: "no"
+
+volumes:
+  pgdata:
+  oauthdata:
