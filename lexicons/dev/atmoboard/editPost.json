@@ -1,0 +1,74 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.editPost",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Edit one of the viewer's own posts, or the opening post (and title) of their thread. The previous version is kept for getPostHistory.",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "key",
+            "textContent"
+          ],
+          "properties": {
+            "key": {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 10,
+              "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 3000,
+              "maxGraphemes": 300
+            },
+            "textContent": {
+              "type": "string",
+              "maxLength": 100000,
+              "maxGraphemes": 10000
+            },
+            "content": {
+              "type": "union",
+              "refs": [
+                "dev.atmoboard.defs#markdown"
+              ]
+            }
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "key",
+            "version"
+          ],
+          "properties": {
+            "key": {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 10,
+              "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+            },
+            "version": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "errors": [
+        {
+          "name": "Forbidden"
+        },
+        {
+          "name": "NotFound"
+        }
+      ]
+    }
+  }
+}

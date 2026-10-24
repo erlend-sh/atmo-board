@@ -18,6 +18,9 @@
 <div class="shell">
   <aside class:open>
     <a class="forum" href="/">{data.forum.name}</a>
+    <form class="find" method="GET" action="/search" role="search">
+      <input type="search" name="q" placeholder="Search" aria-label="Search the forum" value={page.url.pathname === '/search' ? page.url.searchParams.get('q') ?? '' : ''} />
+    </form>
     <nav>
       <a class="link" class:active={page.url.pathname === '/'} href="/"><span class="name">Latest</span>{#if total}<span class="badge">{total}</span>{/if}</a>
       {#each data.sections as section}
@@ -48,6 +51,10 @@
   aside { background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column;
     position: sticky; top: 0; height: 100vh; overflow-y: auto; }
   .forum { display: block; padding: 18px 16px 12px; font-weight: 700; font-size: 17px; }
+  .find { padding: 0 8px 4px; }
+  .find input { width: 100%; font: inherit; font-size: 14px; color: var(--text); background: var(--surface-2);
+    border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; }
+  .find input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
   nav { flex: 1; padding: 0 8px 16px; }
   h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 16px 8px 4px; }
   .link, .channel { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px; color: var(--text-2); }

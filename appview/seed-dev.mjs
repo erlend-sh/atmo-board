@@ -63,9 +63,9 @@ await chat(general, people.sam, 'neat, and everything polls every 15 seconds, so
 const welcome = await thread(general, people.alice, 'Welcome to atmo-board',
   'atmo-board is a forum on atproto, shaped like Discourse with a little Discord.\n\n' +
   '- Every channel has an untitled **chat** and a list of **threads**.\n' +
-  '- Links look like Discourse\'s: `/t/{slug}/{key}/{n}` points at post *n*.\n' +
+  '- Links look like Discourse\'s: `/t/{key}/{slug}/{n}` points at post *n*.\n' +
   '- Your posts are written to the forum\'s space under your own DID.\n\nTry replying below.');
-const r2 = await reply(welcome, people.bob, 'Love that post numbers work like Discourse. `/t/welcome-to-atmo-board/…/2` is this post.');
+const r2 = await reply(welcome, people.bob, 'Love that post numbers work like Discourse. `/t/…/welcome-to-atmo-board/2` is this post.');
 await reply(welcome, people.sam, 'Is there a short link for a single post?');
 await reply(welcome, people.maya, 'Yes, `/p/{key}` (click the timestamp on any post). It keeps working if the post is moved.', r2.key);
 
@@ -74,11 +74,11 @@ await reply(hi, people.alice, 'Welcome Sam! A book club is exactly the kind of g
 await chat(intros, people.bob, 'Bob here, mostly lurking for now.');
 
 const dark = await thread(ideas, people.bob, 'Reactions on chat messages', 'Could we get emoji reactions on chat messages, like Discord? A ❤️ could double as the Discourse-style like.');
-await reply(dark, people.maya, 'It\'s on the list for the next milestone, along with edit history.');
+await reply(dark, people.maya, 'Done: hover any message and pick an emoji. Edit history came along with it.');
 await thread(ideas, people.sam, 'Trust levels for new members', 'Will new members be sandboxed the way Discourse does it with TL0?');
 
 const login = await thread(help, people.sam, 'How do I sign in with Bluesky?', 'I only see a member picker on the sign-in page.');
-await reply(login, people.alice, 'That\'s the local demo login. Real atproto OAuth (Bluesky or any PDS) comes in milestone 2.');
+await reply(login, people.alice, 'That\'s the local demo login. With OAuth configured, the sign-in page takes your handle and sends you to your PDS.');
 
 console.log(`Seeded "Atmo Board": ${Object.keys(people).length} members, 4 channels.`);
 console.log('Members you can sign in as:', Object.values(people).map((p) => p.handle).join(', '));

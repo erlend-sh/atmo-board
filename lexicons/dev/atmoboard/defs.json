@@ -337,6 +337,14 @@
         },
         "lastReadNumber": {
           "type": "integer"
+        },
+        "notificationLevel": {
+          "type": "string",
+          "knownValues": [
+            "watching",
+            "normal",
+            "muted"
+          ]
         }
       }
     },
@@ -425,6 +433,64 @@
         },
         "hidden": {
           "type": "boolean"
+        },
+        "editCount": {
+          "type": "integer",
+          "description": "Earlier versions kept by getPostHistory."
+        },
+        "deleted": {
+          "type": "boolean",
+          "description": "The author deleted this post; its text is gone."
+        }
+      }
+    },
+    "revisionView": {
+      "type": "object",
+      "required": [
+        "version",
+        "textContent",
+        "createdAt"
+      ],
+      "properties": {
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "title": {
+          "type": "string"
+        },
+        "textContent": {
+          "type": "string"
+        },
+        "content": {
+          "type": "union",
+          "refs": [
+            "#markdown"
+          ]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "datetime"
+        },
+        "current": {
+          "type": "boolean"
+        }
+      }
+    },
+    "postHit": {
+      "type": "object",
+      "required": [
+        "post",
+        "thread"
+      ],
+      "properties": {
+        "post": {
+          "type": "ref",
+          "ref": "#postView"
+        },
+        "thread": {
+          "type": "ref",
+          "ref": "#threadView"
         }
       }
     },

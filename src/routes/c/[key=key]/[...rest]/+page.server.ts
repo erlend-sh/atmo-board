@@ -4,6 +4,7 @@ import { api } from '$lib/server/hv';
 import { actionFailure, pageError } from '$lib/server/errors';
 import type { ThreadPage, ThreadView } from '$lib/types';
 import { channelHref, threadHref } from '$lib/names';
+import { postActions } from '$lib/server/postActions';
 
 // A channel is a thread with a sidebar entry. Its own posts are the untitled
 // chat, at /c/{key}/{slug}/chat and titled "{channel}/chat"; its child
@@ -34,6 +35,7 @@ export const load: PageServerLoad = async ({ locals, params, url }) => {
 };
 
 export const actions: Actions = {
+  ...postActions,
   chat: async ({ locals, params, request }) => {
     const form = await request.formData();
     const text = String(form.get('text') ?? '').trim();

@@ -164,7 +164,7 @@ local ITEM_COLS = [[
   i.key, i.uri, i.kind, i.space, i.author, i.thread_key, i.parent_key, i.title, i.slug,
   i.text, i.content::text AS content, i.tags::text AS tags, i.number, i.reply_to,
   i.created_at, i.updated_at, i.last_activity_at, i.post_count,
-  i.locked, i.pinned, i.hidden,
+  i.locked, i.pinned, i.hidden, i.deleted, i.edit_count,
   m.handle AS author_handle, m.display_name AS author_name, m.avatar AS author_avatar,
   m.roles::text AS author_roles, m.trust_level AS author_tl,
   c.thread_key IS NOT NULL AS is_channel
@@ -225,6 +225,8 @@ local function thread_view(row, viewer)
   if viewer then
     local r = one("SELECT last_read FROM ab_reads WHERE did = $1 AND thread_key = $2", { viewer, row.key })
     if r then v.lastReadNumber = tonumber(r.last_read) end
+    local f = one("SELECT level FROM ab_follows WHERE did = $1 AND thread_key = $2", { viewer, row.key })
+    v.notificationLevel = f and f.level or "normal"
   end
   return v
 end
@@ -239,6 +241,13 @@ local function post_view(row, viewer)
   if row.reply_to then v.replyTo = tonumber(row.reply_to) end
   if row.updated_at then v.updatedAt = row.updated_at end
   if truthy(row.hidden) then v.hidden = true end
+  local edits = tonumber(row.edit_count) or 0
+  if edits > 0 then v.editCount = edits end
+  if truthy(row.deleted) then
+    -- The author deleted it: keep the number, drop everything else.
+    v.deleted, v.textContent, v.content, v.editCount = true, "", nil, nil
+    return v
+  end
   local rx = exec([[
     SELECT emoji, count(*)::int AS n, bool_or(author = $2) AS mine
     FROM ab_reactions WHERE post_key = $1 GROUP BY emoji ORDER BY min(created_at)]], P(row.key, viewer or ""))
@@ -298,6 +307,20 @@ end
 -- ---------------------------------------------------------------- writes
 
 local function main_space() return atproto.spaces.get(config("space_main")) end
+
+-- at://{group}/space/{type}/{skey}/{author}/{collection}/{rkey}
+local function record_path(uri)
+  local parts = {}
+  for seg in string.gmatch(uri, "[^/]+") do table.insert(parts, seg) end
+  return parts[#parts - 1], parts[#parts]
+end
+
+-- The thread (and its channel) an item belongs to, for change hints.
+local function thread_and_parent(item)
+  local tk = item.kind == "post" and item.thread_key or item.key
+  local t = one("SELECT parent_key FROM ab_items WHERE key = $1", { tk })
+  return tk, t and t.parent_key or nil
+end
 
 -- Index a record we just wrote into ab_items. A thread's own text is its
 -- opening post, number 1, as in Discourse; a thread without text (a channel's

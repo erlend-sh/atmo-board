@@ -4,7 +4,8 @@
   import Composer from '$lib/components/Composer.svelte';
   import Poller from '$lib/components/Poller.svelte';
   import JoinNotice from '$lib/components/JoinNotice.svelte';
-  import { threadHref } from '$lib/names';
+  import NotifyMenu from '$lib/components/NotifyMenu.svelte';
+  import { channelHref, threadHref } from '$lib/names';
   import { invalidate } from '$app/navigation';
   let { data } = $props();
   // The sidebar loaded alongside this page, before the read was recorded.
@@ -37,6 +38,7 @@
       </h1>
       {#if t.tags.length}<p>{#each t.tags as tag}<a class="tag" href="/tag/{tag}">{tag}</a> {/each}</p>{/if}
     </div>
+    {#if data.viewer.did}<NotifyMenu thread={t.key} level={t.notificationLevel} />{/if}
   </div>
   <JoinNotice viewer={data.viewer} />
 
@@ -44,10 +46,10 @@
   <section class="posts">
     {#each p.posts as post (post.key)}
       <div class="item" class:target={post.number === data.target}>
-        <Post {post} threadHref={base} />
-        {#if p.permissions.reply}
-          <button class="reply" onclick={() => (replyTo = { key: post.number === 1 ? t.key : post.key, number: post.number, name: post.author.handle ?? 'post' })}>Reply</button>
-        {/if}
+        <Post {post} threadHref={base} viewer={data.viewer.did} canReact={p.permissions.reply}
+          title={post.number === 1 ? t.title : undefined}
+          deleteTo={post.number === 1 && p.channel ? channelHref(p.channel) : undefined}
+          onreply={p.permissions.reply ? () => (replyTo = { key: post.number === 1 ? t.key : post.key, number: post.number, name: post.author.handle ?? 'post' }) : undefined} />
       </div>
     {/each}
   </section>
@@ -69,12 +71,8 @@
 
 <style>
   .posts { border-top: 1px solid var(--border); }
-  .item { position: relative; border-bottom: 1px solid var(--border); padding: 4px 0; }
+  .item { border-bottom: 1px solid var(--border); padding: 4px 0; }
   .item.target { background: linear-gradient(90deg, var(--accent-soft), transparent 60%); }
-  .reply { position: absolute; right: 0; bottom: 8px; background: none; border: 0; color: var(--muted);
-    font: inherit; font-size: 13px; cursor: pointer; opacity: 0; }
-  .item:hover .reply, .reply:focus { opacity: 1; }
-  @media (hover: none) { .reply { opacity: 1; } }
   .more { display: block; padding: 10px 0; color: var(--accent); font-size: 14px; }
   .tag { color: var(--muted); padding: 0 6px; border-radius: 4px; background: var(--surface-2); font-size: 13px; }
   .dock { position: sticky; bottom: 0; padding: 12px 0 16px; background: linear-gradient(transparent, var(--bg) 30%); }

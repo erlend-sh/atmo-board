@@ -4,6 +4,7 @@
   import Composer from '$lib/components/Composer.svelte';
   import Poller from '$lib/components/Poller.svelte';
   import JoinNotice from '$lib/components/JoinNotice.svelte';
+  import NotifyMenu from '$lib/components/NotifyMenu.svelte';
   import { grouped } from '$lib/grouping';
   import { channelHref } from '$lib/names';
   import { invalidate } from '$app/navigation';
@@ -36,6 +37,7 @@
         {#if ch?.description}<p>{ch.description}</p>{/if}
       {/if}
     </div>
+    {#if data.viewer.did}<NotifyMenu thread={t.key} level={t.notificationLevel} channel />{/if}
     {#if data.chat.permissions.create && data.view === 'threads'}
       <button class="btn primary" onclick={() => (composing = !composing)}>{composing ? 'Cancel' : 'New thread'}</button>
     {/if}
@@ -56,7 +58,7 @@
       {#if data.chat.hasBefore}<p class="more">Showing the latest {data.chat.posts.length} messages.</p>{/if}
       {#if data.chat.posts.length === 0}<p class="empty">No messages yet. Say hello.</p>{/if}
       {#each grouped(data.chat.posts) as { post, compact } (post.key)}
-        <Post {post} {compact} threadHref={base} />
+        <Post {post} {compact} threadHref={base} viewer={data.viewer.did} canReact={data.chat.permissions.reply} />
       {/each}
       <div bind:this={chatEnd}></div>
     </section>

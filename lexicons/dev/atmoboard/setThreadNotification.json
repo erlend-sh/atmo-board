@@ -1,0 +1,62 @@
+{
+  "lexicon": 1,
+  "id": "dev.atmoboard.setThreadNotification",
+  "defs": {
+    "main": {
+      "type": "procedure",
+      "description": "Follow (watching), reset (normal) or mute a thread or channel. Private appview state. Muted threads drop out of unread counts and lists.",
+      "input": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "thread",
+            "level"
+          ],
+          "properties": {
+            "thread": {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 10,
+              "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+            },
+            "level": {
+              "type": "string",
+              "knownValues": [
+                "watching",
+                "normal",
+                "muted"
+              ]
+            }
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "thread",
+            "level"
+          ],
+          "properties": {
+            "thread": {
+              "type": "string",
+              "minLength": 10,
+              "maxLength": 10,
+              "description": "Short stable key: the first 50 bits of sha256(at-uri), as 10 lowercase base32 characters."
+            },
+            "level": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "errors": [
+        {
+          "name": "NotFound"
+        }
+      ]
+    }
+  }
+}
