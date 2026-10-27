@@ -1,6 +1,6 @@
 # Research notes: Discord, Discourse, and the `garden.msg` baseline
 
-Background for designing an atproto-grounded API for group chat and forum software. The research sections make no decisions. The last section lists the questions they raised and how each was answered for atmo-board (see `atmo-board-requirements.md` (project notes, not in the repo)).
+Background for designing an atproto-grounded API for group chat and forum software. The research sections make no decisions. The last section lists the questions they raised and how each was answered for atmo-board in the project notes, `atmo-board-requirements.md`, which is not in the repo yet.
 
 Sources: Discord developer docs (permissions page checked 2026-10-23), Discourse REST API docs (meta.discourse.org/t/22706) and the User API Keys spec (meta.discourse.org/t/48536), plus the atmospheric-threads project notes.
 
