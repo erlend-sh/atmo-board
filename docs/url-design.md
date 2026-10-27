@@ -2,7 +2,7 @@
 
 atmo-board follows Discourse's URL design, with one change: the identity of a page is a short key derived from the record's atproto address, and the slug after it is only decoration.
 
-This combines items 2 and 6 of `atmo-board-requirements.md` in the project notes.
+This combines items 2 and 6 of `atmo-board-requirements.md` in the project notes, and its Discourse URL scheme prep, which is kept as a reference at the end.
 
 ## Why not atmoBB's URLs (item 2)
 
@@ -53,3 +53,30 @@ How they behave:
 - **A channel's thread URL redirects.** `/t/{key}` for a channel goes to its `/c/` URL.
 - **Post permalinks survive moves.** `/p/{key}` looks up wherever the post lives now and redirects there, so a link to a post still works after its thread is moved or renamed. Posts in a channel's chat land on the chat page.
 - **Post numbers count up within each thread**, starting at 1 for the opening post.
+
+## Reference: Discourse's URL scheme
+
+The scheme atmo-board started from.
+
+| Resource | URL | Notes |
+|---|---|---|
+| Topic | `/t/{slug}/{id}` | `id` is the identity, and the slug is decorative. A wrong or stale slug redirects with a 301 to the canonical one, and `/t/{id}` works on its own. |
+| Post in topic | `/t/{slug}/{id}/{post_number}` | `post_number` is the 1-based position in the topic. The page opens scrolled to that post. |
+| Last post | `/t/{slug}/{id}/last` | |
+| Short post link | `/p/{post_id}` | Redirects to the topic and post number, so it survives a post being moved. |
+| Category | `/c/{parent-slug}/{slug}/{id}` | Slugs are decorative here too, and the ID alone resolves. |
+| Category filters | `/c/{slug}/{id}/l/{latest\|new\|unread\|top}` | `/c/.../none` means "no subcategory". |
+| Global lists | `/latest`, `/new`, `/unread`, `/top?period=weekly`, `/categories` | |
+| Tag | `/tag/{tag}`, `/tags/c/{cat-slug}/{id}/{tag}` | |
+| User | `/u/{username}`, `/u/{username}/activity`, `/u/{username}/summary` | |
+| Group | `/g/{name}` | |
+| Search | `/search?q=` | |
+| JSON | Add `.json` to any of the above | The same URL serves the API. |
+
+Discourse's principles, and how atmo-board follows each one:
+
+- **Each URL has one stable key.** In Discourse it's a number handed out by the server. In atmo-board it's the 10-character hash of the record's at-uri, so any appview can compute it.
+- **The human-readable parts are decorative and get redirected.** The same in atmo-board, except that the key comes before the slug.
+- **A post is addressed by its position in the thread.** The same: `/t/{key}/{slug}/{n}`.
+- **Every resource has a short permalink.** The same: `/p/{key}`.
+- **The web URL and the API URL are the same.** Not adopted. atmo-board's API is XRPC (`/xrpc/dev.atmoboard.getThread` and so on), served by the appview, and the web pages are separate.
