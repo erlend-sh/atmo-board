@@ -1,6 +1,6 @@
 # Research notes: Discord, Discourse, and the `garden.msg` baseline
 
-Background for designing an atproto-grounded API for group chat and forum software. The research sections make no decisions. The last section lists the questions they raised and how each was answered for atmo-board (see [atmo-board-requirements.md](atmo-board-requirements.md)).
+Background for designing an atproto-grounded API for group chat and forum software. The research sections make no decisions. The last section lists the questions they raised and how each was answered for atmo-board in the project notes, `atmo-board-requirements.md`, which is not in the repo yet.
 
 Sources: Discord developer docs (permissions page checked 2026-10-23), Discourse REST API docs (meta.discourse.org/t/22706) and the User API Keys spec (meta.discourse.org/t/48536), plus the atmospheric-threads project notes.
 
@@ -132,7 +132,7 @@ These points come from how atproto works, not from either app, and the design wi
 6. **XRPC shape.** Lexicon queries and procedures replace REST verbs (`<ns>.getThread`, `<ns>.listMessages`, `<ns>.createReport`), and lexicon `subscription` types give a WebSocket. Bluesky's split between `app.bsky.*` (AppView views) and record lexicons is the precedent for keeping *records* (`garden.msg.*`) separate from the *API views* that hydrate them.
 
 ## 5. Questions for the design, and how they were answered
-Each answer points to its item in [atmo-board-requirements.md](atmo-board-requirements.md).
+Each answer points to its item in `atmo-board-requirements.md`.
 
 - **Permission vocabulary: Discord flags, Discourse levels, or a core plus extensions?** Discourse-style. Each channel grants each group See, Reply or Create, and the groups include the automatic trust-level groups and staff (item 5). Trust levels lead the moderation design (item 4): the code maps them to a few abilities (flag at TL1, rename and move at TL3, pin, lock and hide at TL4, everything else for staff).
 - **Where do roles, membership and overwrites live, and who can verify them?** atmoBB's split (item 7). Membership, posts and likes are member-owned records in each member's repo. Channels, staff grants, manual trust levels and moderation actions are forum-signed records in the forum's repo, so any appview can verify them. Automatic trust levels TL0 to TL3 are computed by the appview from private data, and only the resulting role is published. Each forum is an Atmospheric Group, so staff and trust levels are roles on its membership records (item 17). Permissioned spaces are used only for private channels and whispers.
