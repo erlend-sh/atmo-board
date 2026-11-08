@@ -1,6 +1,6 @@
 # Mock API
 
-A stand-in for the read API a frontend-only atmo-board page will call: a Group Host or appview serving `community.lexicon.thread.*` (draft 8) from a group's public space. Everything runs in the page, from one script, with no backend.
+A stand-in for the read API a frontend-only atmo-board page will call: a Group Host or appview serving `community.lexicon.thread.*` (draft 9) from a group's public space. Everything runs in the page, from one script, with no backend.
 
 ```html
 <script src="mock/dist/mock-api.js" data-as="bob.example"></script>
@@ -16,7 +16,7 @@ The script answers `fetch()` calls to `/xrpc/*` (same origin) or `https://mock.i
 | Path | What |
 |---|---|
 | `fixtures.json` | 1,439 plain records grouped by the repo that writes them: the group, 19 channels, 32 threads with 375 posts, reactions, recommends, subscriptions, overrides and profiles. Generated, don't edit. |
-| `lexicons/` | The draft 8 records, copied from the Atmospheric Threads proposal, plus the four proposed queries below. `vendor/` has a trimmed `app.bsky.actor.profile`. |
+| `lexicons/` | Copied from the Atmospheric Threads proposal (draft 9): records, view defs and the four queries below. `vendor/` has a trimmed `app.bsky.actor.profile`. |
 | `src/core.js` | The mock indexer. No dependencies; runs in the page and in Node. |
 | `src/browser.js` | The fetch shim and `window.mockApi`. |
 | `dist/mock-api.js` | `core.js` + `browser.js` with the fixtures and lexicons inlined, so it works from `file://`. Generated. |
@@ -31,7 +31,7 @@ npm test
 
 ## Queries (proposed names)
 
-The lexicon leaves the query names open, so these are proposals. Their lexicons are in `lexicons/` and return the shared `defs#threadView` and `defs#postView`.
+These queries are part of the shared lexicon as of draft 9. Their lexicons are in `lexicons/` and return the shared `defs#threadView` and `defs#postView`.
 
 | Method | Params | Returns |
 |---|---|---|
@@ -77,8 +77,7 @@ The threads are real, from discourse.atmosphere.community (fetched 2026-10-24), 
 - The Discussion chat, the hidden spam message, the pinned thread, the locked IETF channel, one down vote and the sample accounts come from the preview, not Discourse.
 - Dates are shifted so the sample's "now" (2026-10-24 11:00 UTC) is the real now. `data-shift-time="false"` keeps them.
 - Left out: the one whisper, and the private Regulars and Staff channels, because they'd live in private spaces.
-- Three long posts were cut to fit the lexicon's 10,000-grapheme limit on `textContent` and `#markdown`.
 
 ## Not modelled
 
-Private spaces and space-qualified URIs (open questions 1 and 2), read state and unread counts (private, so the page keeps them), search, notifications, blobs and group icons, and trust levels. `defs#viewerState` (the viewer's own vote, reactions and subscription on a view) is a proposed addition to the shared defs that the mock needs.
+Private spaces and space-qualified URIs (open questions 1 and 2), read state and unread counts (private, so the page keeps them), search, notifications, blobs and group icons, and trust levels.

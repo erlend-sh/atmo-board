@@ -4,7 +4,7 @@
   "defs": {
     "main": {
       "type": "query",
-      "description": "A group with its sidebar: the record, its featured channels in section and position order, and its member count. Proposed by the mock API.",
+      "description": "A group with its sidebar: the record, its featured channels in section and position order, and its member count.",
       "parameters": {
         "type": "params",
         "required": [

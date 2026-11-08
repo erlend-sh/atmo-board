@@ -4,7 +4,7 @@
   "defs": {
     "main": {
       "type": "query",
-      "description": "A thread and its posts, oldest first: the opening post, the replies, or a channel's chat. thread may also be a site.standard.document, for its comments, in which case the thread view is absent. Proposed by the mock API.",
+      "description": "A thread and its posts, oldest first: the opening post, the replies, or a channel's chat. thread may also be a site.standard.document, for its comments, in which case the thread view is absent.",
       "parameters": {
         "type": "params",
         "required": [

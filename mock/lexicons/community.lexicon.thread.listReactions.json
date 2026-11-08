@@ -4,7 +4,7 @@
   "defs": {
     "main": {
       "type": "query",
-      "description": "Who left which reaction on a subject, newest first. Proposed by the mock API.",
+      "description": "Who left which reaction on a subject, newest first.",
       "parameters": {
         "type": "params",
         "required": [

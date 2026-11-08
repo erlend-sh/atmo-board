@@ -31,8 +31,8 @@
           },
           "textContent": {
             "type": "string",
-            "maxLength": 100000,
-            "maxGraphemes": 10000,
+            "maxLength": 1000000,
+            "maxGraphemes": 100000,
             "description": "Plain-text rendering of the post. Required, so every reader can show every post. Should not contain markdown or other formatting."
           },
           "content": {

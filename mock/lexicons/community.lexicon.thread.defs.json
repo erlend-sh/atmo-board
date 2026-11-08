@@ -25,8 +25,8 @@
       "properties": {
         "text": {
           "type": "string",
-          "maxLength": 100000,
-          "maxGraphemes": 10000,
+          "maxLength": 1000000,
+          "maxGraphemes": 100000,
           "description": "CommonMark markdown. Raw HTML should not be rendered."
         }
       }
@@ -211,7 +211,7 @@
     },
     "viewerState": {
       "type": "object",
-      "description": "The signed-in viewer's own records about the subject, so a client can show and undo them. Absent when nobody is signed in. (Proposed by the mock API.)",
+      "description": "The signed-in viewer's own records about the subject, so a client can show and undo them. Absent when nobody is signed in.",
       "properties": {
         "recommend": {
           "type": "string",
