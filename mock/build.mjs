@@ -3,7 +3,7 @@
 //   node build.mjs
 //
 // 1. Turns sample-data/data.json (real threads from discourse.atmosphere.community, see design/sample-data)
-//    into plain community.lexicon.thread.* records, grouped by the repo that would write them.
+//    into plain garden.msg.* records, grouped by the repo that would write them.
 // 2. Validates every record against lexicons/ with @atproto/lexicon.
 // 3. Writes fixtures.json, and dist/mock-api.js: src/core.js plus the fixtures and lexicons inlined,
 //    so a page opened from file:// can load it with one <script> tag.
@@ -94,7 +94,7 @@ const people = data.members.map((m) => m.u);
 const pickOthers = (n, not) => { const out = new Set(); while (out.size < Math.min(n, people.length - 1)) { const u = people[Math.floor(rand() * people.length)]; if (u !== not) out.add(u); } return [...out]; };
 const later = (at, mins) => { const t = Math.min(Date.parse(at) + mins * 60000, Date.parse(NOW) - 60000); return new Date(Math.max(t, Date.parse(at) + 1000)).toISOString(); };
 
-// community.lexicon.thread.post caps textContent and defs#markdown at 100,000 graphemes; anything longer is cut.
+// garden.msg.post caps textContent and defs#markdown at 100,000 graphemes; anything longer is cut.
 const seg = new Intl.Segmenter();
 let cut = 0;
 const fit = (s) => { const g = [...seg.segment(s)]; if (g.length <= 100000) return s; cut++; return g.slice(0, 99999).map((x) => x.segment).join('') + '…'; };

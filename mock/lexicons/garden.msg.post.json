@@ -1,6 +1,6 @@
 {
   "lexicon": 1,
-  "id": "community.lexicon.thread.post",
+  "id": "garden.msg.post",
   "defs": {
     "main": {
       "type": "record",
@@ -17,7 +17,7 @@
           "thread": {
             "type": "string",
             "format": "at-uri",
-            "description": "The root this post belongs to (the root in Bluesky, Barazo and Coves terms): a community.lexicon.thread.thread, or any site.standard.document when the post is a comment on an article."
+            "description": "The root this post belongs to (the root in Bluesky, Barazo and Coves terms): a garden.msg.thread, or any site.standard.document when the post is a comment on an article."
           },
           "replyTo": {
             "type": "string",
@@ -27,7 +27,7 @@
           "document": {
             "type": "string",
             "format": "at-uri",
-            "description": "A site.standard.document that is the same piece of writing, such as a thread's opening post that is also a blog post, or a long reply republished as an article. Only counts when the document is in the same repo and links back with community.lexicon.thread.defs#link."
+            "description": "A site.standard.document that is the same piece of writing, such as a thread's opening post that is also a blog post, or a long reply republished as an article. Only counts when the document is in the same repo and links back with garden.msg.defs#link."
           },
           "textContent": {
             "type": "string",
@@ -38,10 +38,10 @@
           "content": {
             "type": "union",
             "refs": [
-              "community.lexicon.thread.defs#markdown"
+              "garden.msg.defs#markdown"
             ],
             "closed": false,
-            "description": "The post in a rich format. Open union: community.lexicon.thread.defs#markdown is the shared format every threads app should be able to read and write; apps may use their own formats, but should still write textContent."
+            "description": "The post in a rich format. Open union: garden.msg.defs#markdown is the shared format every threads app should be able to read and write; apps may use their own formats, but should still write textContent."
           },
           "labels": {
             "type": "union",

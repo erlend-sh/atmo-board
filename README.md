@@ -1,6 +1,6 @@
 # atmo-board
 
-> **Frontend-only from here on.** The backend below (SvelteKit app, HappyView appview, `dev.atmoboard.*`) is no longer needed. The page is being built as a frontend-only HTML page against [`mock/`](mock/README.md), an in-page mock of the `community.lexicon.thread.*` read API.
+> **Frontend-only from here on.** The backend below (SvelteKit app, HappyView appview, `dev.atmoboard.*`) is no longer needed. The page is being built as a frontend-only HTML page against [`mock/`](mock/README.md), an in-page mock of the `garden.msg.*` read API.
 
 An atmospheric comms application: Discourse on atproto, a little more minimal, with Discord's channels. One install is one forum, and each forum is an [Atmospheric Group](https://tangled.org/opensocial.group/proposal).
 

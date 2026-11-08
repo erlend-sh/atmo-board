@@ -1,6 +1,6 @@
 {
   "lexicon": 1,
-  "id": "community.lexicon.thread.getThread",
+  "id": "garden.msg.getThread",
   "defs": {
     "main": {
       "type": "query",
@@ -46,13 +46,13 @@
           "properties": {
             "thread": {
               "type": "ref",
-              "ref": "community.lexicon.thread.defs#threadView"
+              "ref": "garden.msg.defs#threadView"
             },
             "posts": {
               "type": "array",
               "items": {
                 "type": "ref",
-                "ref": "community.lexicon.thread.defs#postView"
+                "ref": "garden.msg.defs#postView"
               }
             },
             "cursor": {

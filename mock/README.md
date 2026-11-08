@@ -1,11 +1,11 @@
 # Mock API
 
-A stand-in for the read API a frontend-only atmo-board page will call: a Group Host or appview serving `community.lexicon.thread.*` (draft 9) from a group's public space. Everything runs in the page, from one script, with no backend.
+A stand-in for the read API a frontend-only atmo-board page will call: a Group Host or appview serving `garden.msg.*` (draft 9) from a group's public space. Everything runs in the page, from one script, with no backend.
 
 ```html
 <script src="mock/dist/mock-api.js" data-as="bob.example"></script>
 <script>
-  const res = await fetch(`https://mock.invalid/xrpc/community.lexicon.thread.listThreads?parent=${encodeURIComponent(uri)}`)
+  const res = await fetch(`https://mock.invalid/xrpc/garden.msg.listThreads?parent=${encodeURIComponent(uri)}`)
 </script>
 ```
 
@@ -35,10 +35,10 @@ These queries are part of the shared lexicon as of draft 9. Their lexicons are i
 
 | Method | Params | Returns |
 |---|---|---|
-| `community.lexicon.thread.getGroup` | `group` | The group record, its channels in section and position order (each with its `threadView` and `threadCount`), `memberCount`, `staff`, and the viewer's membership. The sidebar. |
-| `community.lexicon.thread.listThreads` | `parent` or `group`, `sort` (`latest`, `new`, `top`), `tag`, `limit`, `cursor` | `threadView`s. Under a `parent`, pinned threads come first. With `group` alone, every thread that isn't a channel: the Latest page. |
-| `community.lexicon.thread.getThread` | `thread`, `order` (`oldest`, `newest`), `limit`, `cursor` | The `threadView` and its `postView`s: the opening post and replies, or a channel's chat (`order=newest` to page back from the bottom). Also takes a `site.standard.document`, for article comments. |
-| `community.lexicon.thread.listReactions` | `subject`, `emoji` | Who reacted with what, for a tooltip. |
+| `garden.msg.getGroup` | `group` | The group record, its channels in section and position order (each with its `threadView` and `threadCount`), `memberCount`, `staff`, and the viewer's membership. The sidebar. |
+| `garden.msg.listThreads` | `parent` or `group`, `sort` (`latest`, `new`, `top`), `tag`, `limit`, `cursor` | `threadView`s. Under a `parent`, pinned threads come first. With `group` alone, every thread that isn't a channel: the Latest page. |
+| `garden.msg.getThread` | `thread`, `order` (`oldest`, `newest`), `limit`, `cursor` | The `threadView` and its `postView`s: the opening post and replies, or a channel's chat (`order=newest` to page back from the bottom). Also takes a `site.standard.document`, for article comments. |
+| `garden.msg.listReactions` | `subject`, `emoji` | Who reacted with what, for a tooltip. |
 
 The mock also answers the few standard methods a client needs: `app.bsky.actor.getProfile(s)` (display names and handles), `com.atproto.identity.resolveHandle`, `com.atproto.server.getSession`, and `com.atproto.repo.getRecord`, `listRecords`, `createRecord`, `putRecord`, `deleteRecord` and `applyWrites`.
 

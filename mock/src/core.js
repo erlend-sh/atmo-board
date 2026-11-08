@@ -1,4 +1,4 @@
-// Mock Group Host for community.lexicon.thread.* — an in-memory indexer over fixture records.
+// Mock Group Host for garden.msg.* — an in-memory indexer over fixture records.
 //
 // It holds plain records grouped by repo, the way they'd sit in authors' repos or a group's public
 // space, and answers the read queries a frontend needs by computing what an indexer would: overrides
@@ -7,7 +7,7 @@
 //
 // No dependencies, so the same file runs in a browser page and in Node (build and tests).
 
-export const NS = 'community.lexicon.thread';
+export const NS = 'garden.msg';
 const C = {
   group: `${NS}.group`, thread: `${NS}.thread`, post: `${NS}.post`, channel: `${NS}.channel`,
   override: `${NS}.override`, subscription: `${NS}.subscription`, recommend: `${NS}.recommend`,

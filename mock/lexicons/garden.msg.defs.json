@@ -1,6 +1,6 @@
 {
   "lexicon": 1,
-  "id": "community.lexicon.thread.defs",
+  "id": "garden.msg.defs",
   "defs": {
     "link": {
       "type": "object",
@@ -12,7 +12,7 @@
         "post": {
           "type": "string",
           "format": "at-uri",
-          "description": "The community.lexicon.thread.post that is the same piece of writing. Replies are the other posts in its thread."
+          "description": "The garden.msg.post that is the same piece of writing. Replies are the other posts in its thread."
         }
       }
     },
@@ -46,7 +46,7 @@
         "uri": {
           "type": "string",
           "format": "at-uri",
-          "description": "The community.lexicon.thread.thread."
+          "description": "The garden.msg.thread."
         },
         "cid": {
           "type": "string",
@@ -131,7 +131,7 @@
         "uri": {
           "type": "string",
           "format": "at-uri",
-          "description": "The community.lexicon.thread.post."
+          "description": "The garden.msg.post."
         },
         "cid": {
           "type": "string",

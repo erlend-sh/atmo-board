@@ -1,7 +1,7 @@
 // Browser entry: makes window.mockApi and answers fetch() calls to /xrpc/* from it.
 //
 // Pages call the API the way they would call a real Group Host:
-//   const res = await fetch(`${XRPC}/xrpc/community.lexicon.thread.listThreads?parent=${uri}`)
+//   const res = await fetch(`${XRPC}/xrpc/garden.msg.listThreads?parent=${uri}`)
 // With XRPC set to '' (same origin) or 'https://mock.invalid', the mock answers. Point XRPC at a
 // real host and drop the script tag to leave the mock.
 //
@@ -30,7 +30,7 @@ window.fetch = async (input, init = {}) => {
   const { status, body: out } = await api.handle(method, url.href, body);
   return new Response(JSON.stringify(out), { status, headers: { 'content-type': 'application/json' } });
 };
-/** Shorthand: await mockApi.xrpc('community.lexicon.thread.getThread', { thread }) for a query, or pass a body for a procedure. Throws on an error response. */
+/** Shorthand: await mockApi.xrpc('garden.msg.getThread', { thread }) for a query, or pass a body for a procedure. Throws on an error response. */
 api.xrpc = async (nsid, params = {}, body) => {
   const qs = new URLSearchParams();
   for (const [k, v] of Object.entries(params)) for (const x of [].concat(v)) if (x !== undefined) qs.append(k, x);

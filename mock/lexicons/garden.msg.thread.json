@@ -1,11 +1,11 @@
 {
   "lexicon": 1,
-  "id": "community.lexicon.thread.thread",
+  "id": "garden.msg.thread",
   "defs": {
     "main": {
       "type": "record",
       "key": "tid",
-      "description": "A titled discussion thread, such as a forum thread or a chat channel. Written by its author. Forked from site.standard.document, but only as a container: it holds the title and where the thread lives, and has no body. Every message in it is a community.lexicon.thread.post, including the opening post (OP), which is the thread author's first post in it that answers no other post. A thread can have no OP, such as a channel whose chat is just its posts.",
+      "description": "A titled discussion thread, such as a forum thread or a chat channel. Written by its author. Forked from site.standard.document, but only as a container: it holds the title and where the thread lives, and has no body. Every message in it is a garden.msg.post, including the opening post (OP), which is the thread author's first post in it that answers no other post. A thread can have no OP, such as a channel whose chat is just its posts.",
       "record": {
         "type": "object",
         "required": [
@@ -17,7 +17,7 @@
           "group": {
             "type": "string",
             "format": "uri",
-            "description": "The group the thread belongs to: a community.lexicon.thread.group (at://), or the group's URL (https://) for a loose thread."
+            "description": "The group the thread belongs to: a garden.msg.group (at://), or the group's URL (https://) for a loose thread."
           },
           "path": {
             "type": "string",
@@ -26,7 +26,7 @@
           "parent": {
             "type": "string",
             "format": "at-uri",
-            "description": "The thread this one lives in, such as the channel a forum thread was posted to. Absent for a top-level thread, which a forum can feature as a channel with community.lexicon.thread.channel."
+            "description": "The thread this one lives in, such as the channel a forum thread was posted to. Absent for a top-level thread, which a forum can feature as a channel with garden.msg.channel."
           },
           "title": {
             "type": "string",

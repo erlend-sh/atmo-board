@@ -1,6 +1,6 @@
 {
   "lexicon": 1,
-  "id": "community.lexicon.thread.reaction",
+  "id": "garden.msg.reaction",
   "defs": {
     "main": {
       "type": "record",
@@ -17,7 +17,7 @@
           "subject": {
             "type": "string",
             "format": "at-uri",
-            "description": "What is being reacted to: usually a community.lexicon.thread.post or .thread, but any record works."
+            "description": "What is being reacted to: usually a garden.msg.post or .thread, but any record works."
           },
           "cid": {
             "type": "string",

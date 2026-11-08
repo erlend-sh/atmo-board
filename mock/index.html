@@ -38,7 +38,7 @@ textarea { width: 100%; min-height: 70px; margin-top: 8px; }
 <script>
 // A tiny client written against the XRPC queries, as a reference for the real page. Everything here comes from fetch().
 const XRPC = 'https://mock.invalid';
-const NS = 'community.lexicon.thread';
+const NS = 'garden.msg';
 async function x(nsid, params = {}, body) {
   const qs = new URLSearchParams(Object.entries(params).filter(([, v]) => v !== undefined));
   const res = await fetch(`${XRPC}/xrpc/${nsid}?${qs}`, body ? { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) } : undefined);

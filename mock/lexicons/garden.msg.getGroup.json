@@ -1,6 +1,6 @@
 {
   "lexicon": 1,
-  "id": "community.lexicon.thread.getGroup",
+  "id": "garden.msg.getGroup",
   "defs": {
     "main": {
       "type": "query",
@@ -14,7 +14,7 @@
           "group": {
             "type": "string",
             "format": "at-uri",
-            "description": "The community.lexicon.thread.group."
+            "description": "The garden.msg.group."
           }
         }
       },
@@ -94,7 +94,7 @@
         "uri": {
           "type": "string",
           "format": "at-uri",
-          "description": "The community.lexicon.thread.channel record."
+          "description": "The garden.msg.channel record."
         },
         "section": {
           "type": "string"
@@ -112,7 +112,7 @@
         },
         "thread": {
           "type": "ref",
-          "ref": "community.lexicon.thread.defs#threadView"
+          "ref": "garden.msg.defs#threadView"
         },
         "threadCount": {
           "type": "integer",
