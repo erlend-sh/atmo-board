@@ -1,0 +1,89 @@
+{
+  "lexicon": 1,
+  "id": "community.lexicon.thread.listReactions",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Who left which reaction on a subject, newest first. Proposed by the mock API.",
+      "parameters": {
+        "type": "params",
+        "required": [
+          "subject"
+        ],
+        "properties": {
+          "subject": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "Any record."
+          },
+          "emoji": {
+            "type": "string",
+            "maxGraphemes": 1
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50
+          },
+          "cursor": {
+            "type": "string"
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "subject",
+            "reactions"
+          ],
+          "properties": {
+            "subject": {
+              "type": "string",
+              "format": "at-uri"
+            },
+            "reactions": {
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "#reaction"
+              }
+            },
+            "cursor": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "reaction": {
+      "type": "object",
+      "required": [
+        "uri",
+        "actor",
+        "emoji",
+        "createdAt"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string",
+          "format": "at-uri"
+        },
+        "actor": {
+          "type": "string",
+          "format": "did"
+        },
+        "emoji": {
+          "type": "string",
+          "maxGraphemes": 1
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "datetime"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "lexicon": 1,
+  "id": "community.lexicon.thread.getGroup",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "A group with its sidebar: the record, its featured channels in section and position order, and its member count. Proposed by the mock API.",
+      "parameters": {
+        "type": "params",
+        "required": [
+          "group"
+        ],
+        "properties": {
+          "group": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "The community.lexicon.thread.group."
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "ref",
+          "ref": "#groupView"
+        }
+      },
+      "errors": [
+        {
+          "name": "NotFound"
+        }
+      ]
+    },
+    "groupView": {
+      "type": "object",
+      "required": [
+        "uri",
+        "cid",
+        "author",
+        "record",
+        "channels",
+        "memberCount"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string",
+          "format": "at-uri"
+        },
+        "cid": {
+          "type": "string",
+          "format": "cid"
+        },
+        "author": {
+          "type": "string",
+          "format": "did"
+        },
+        "record": {
+          "type": "unknown"
+        },
+        "channels": {
+          "type": "array",
+          "items": {
+            "type": "ref",
+            "ref": "#channelView"
+          }
+        },
+        "memberCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Subscriptions with only group set."
+        },
+        "staff": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "did"
+          },
+          "description": "Members who can act for the group: write overrides and post in locked threads. Where this comes from (roles, a membership record) is outside this lexicon."
+        },
+        "viewer": {
+          "type": "ref",
+          "ref": "#groupViewerState"
+        }
+      }
+    },
+    "channelView": {
+      "type": "object",
+      "required": [
+        "uri",
+        "position",
+        "thread"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string",
+          "format": "at-uri",
+          "description": "The community.lexicon.thread.channel record."
+        },
+        "section": {
+          "type": "string"
+        },
+        "position": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "icon": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string",
+          "description": "The .channel's description, else the container's."
+        },
+        "thread": {
+          "type": "ref",
+          "ref": "community.lexicon.thread.defs#threadView"
+        },
+        "threadCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Visible child threads, at any depth."
+        }
+      }
+    },
+    "groupViewerState": {
+      "type": "object",
+      "properties": {
+        "subscription": {
+          "type": "string",
+          "format": "at-uri",
+          "description": "The viewer's group-wide .subscription: present means joined."
+        },
+        "notify": {
+          "type": "string",
+          "knownValues": [
+            "posts",
+            "threads",
+            "none"
+          ]
+        },
+        "staff": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "lexicon": 1,
+  "id": "community.lexicon.thread.listThreads",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "Threads for a board. With parent, the threads directly under that container, pinned first. With group alone, every thread in the group that isn't a featured channel (the Latest page). Hidden threads are left out unless the viewer is staff. Proposed by the mock API.",
+      "parameters": {
+        "type": "params",
+        "properties": {
+          "parent": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "List the child threads of this container."
+          },
+          "group": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "List every thread in this group. Ignored when parent is set."
+          },
+          "sort": {
+            "type": "string",
+            "knownValues": [
+              "latest",
+              "new",
+              "top"
+            ],
+            "default": "latest",
+            "description": "latest: newest post first. new: newest thread first. top: highest score first."
+          },
+          "tag": {
+            "type": "string",
+            "description": "Only threads with this tag."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 50
+          },
+          "cursor": {
+            "type": "string"
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "threads"
+          ],
+          "properties": {
+            "threads": {
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "community.lexicon.thread.defs#threadView"
+              }
+            },
+            "cursor": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "errors": [
+        {
+          "name": "NotFound"
+        }
+      ]
+    }
+  }
+}

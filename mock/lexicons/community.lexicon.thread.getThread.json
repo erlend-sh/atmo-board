@@ -1,0 +1,71 @@
+{
+  "lexicon": 1,
+  "id": "community.lexicon.thread.getThread",
+  "defs": {
+    "main": {
+      "type": "query",
+      "description": "A thread and its posts, oldest first: the opening post, the replies, or a channel's chat. thread may also be a site.standard.document, for its comments, in which case the thread view is absent. Proposed by the mock API.",
+      "parameters": {
+        "type": "params",
+        "required": [
+          "thread"
+        ],
+        "properties": {
+          "thread": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "The container (or article) whose posts to return."
+          },
+          "order": {
+            "type": "string",
+            "knownValues": [
+              "oldest",
+              "newest"
+            ],
+            "default": "oldest",
+            "description": "newest suits chat, which opens at the bottom and pages back."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 100
+          },
+          "cursor": {
+            "type": "string"
+          }
+        }
+      },
+      "output": {
+        "encoding": "application/json",
+        "schema": {
+          "type": "object",
+          "required": [
+            "posts"
+          ],
+          "properties": {
+            "thread": {
+              "type": "ref",
+              "ref": "community.lexicon.thread.defs#threadView"
+            },
+            "posts": {
+              "type": "array",
+              "items": {
+                "type": "ref",
+                "ref": "community.lexicon.thread.defs#postView"
+              }
+            },
+            "cursor": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "errors": [
+        {
+          "name": "NotFound"
+        }
+      ]
+    }
+  }
+}

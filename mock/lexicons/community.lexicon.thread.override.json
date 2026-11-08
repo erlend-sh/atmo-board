@@ -1,0 +1,72 @@
+{
+  "lexicon": 1,
+  "id": "community.lexicon.thread.override",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "description": "A curation or moderation decision a group applies on top of authors' records, which it can't edit. Only counts when written by the repo that owns the group the subject's thread belongs to. For each subject and action pair, the newest record wins.",
+      "record": {
+        "type": "object",
+        "required": [
+          "subject",
+          "action",
+          "createdAt"
+        ],
+        "properties": {
+          "subject": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "The community.lexicon.thread.container or community.lexicon.thread.post acted on."
+          },
+          "action": {
+            "type": "string",
+            "knownValues": [
+              "move",
+              "rename",
+              "hide",
+              "unhide",
+              "lock",
+              "unlock",
+              "pin",
+              "unpin"
+            ],
+            "description": "move: a thread gets a new parent, or a post a new thread. rename: a thread gets a new title. hide: readers stop seeing the subject (staff still can). lock: only staff may post in the thread. pin: the thread is shown first in its parent."
+          },
+          "toThread": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "For move: the new parent thread (for a thread) or the new thread (for a post)."
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 5000,
+            "maxGraphemes": 500,
+            "description": "For rename. Same limits as community.lexicon.thread.container#title."
+          },
+          "until": {
+            "type": "string",
+            "format": "datetime",
+            "description": "For pin, lock or hide: when the action lapses."
+          },
+          "actor": {
+            "type": "string",
+            "format": "did",
+            "description": "The staff member who took the action."
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 10000,
+            "maxGraphemes": 1000,
+            "description": "Shown to readers, such as why a thread was locked or moved."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime"
+          }
+        }
+      }
+    }
+  }
+}
