@@ -17,7 +17,7 @@
           "thread": {
             "type": "string",
             "format": "at-uri",
-            "description": "The community.lexicon.thread.container being featured."
+            "description": "The community.lexicon.thread.thread being featured."
           },
           "section": {
             "type": "string",

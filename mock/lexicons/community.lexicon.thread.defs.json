@@ -46,7 +46,7 @@
         "uri": {
           "type": "string",
           "format": "at-uri",
-          "description": "The community.lexicon.thread.container."
+          "description": "The community.lexicon.thread.thread."
         },
         "cid": {
           "type": "string",

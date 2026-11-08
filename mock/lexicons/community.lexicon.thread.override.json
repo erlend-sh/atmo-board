@@ -17,7 +17,7 @@
           "subject": {
             "type": "string",
             "format": "at-uri",
-            "description": "The community.lexicon.thread.container or community.lexicon.thread.post acted on."
+            "description": "The community.lexicon.thread.thread or community.lexicon.thread.post acted on."
           },
           "action": {
             "type": "string",
@@ -43,7 +43,7 @@
             "minLength": 1,
             "maxLength": 5000,
             "maxGraphemes": 500,
-            "description": "For rename. Same limits as community.lexicon.thread.container#title."
+            "description": "For rename. Same limits as community.lexicon.thread.thread#title."
           },
           "until": {
             "type": "string",

@@ -59,7 +59,7 @@ const CH = {}, positions = {};
 const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60);
 for (const [i, c] of channels.entries()) {
   const at = new Date(Date.parse(FOUNDED) + (i + 1) * 3600e3).toISOString();
-  CH[c.title] = put(GROUP_DID, C.container, tidFor(at), {
+  CH[c.title] = put(GROUP_DID, C.thread, tidFor(at), {
     group: GROUP, title: c.title, path: `/c/${slug(c.title)}`, publishedAt: at, ...(c.desc ? { description: c.desc } : {}),
   });
   const position = (positions[c.section] = (positions[c.section] ?? -1) + 1);
@@ -113,7 +113,7 @@ const THREAD = {}, OP = {};
 let dropped = 0;
 for (const t of data.threads) {
   const first = t.posts[0], at = iso(first.at);
-  const uri = put(account(first.u), C.container, tidFor(at), {
+  const uri = put(account(first.u), C.thread, tidFor(at), {
     group: GROUP, parent: CH[t.ch], title: t.title, path: `/t/${slug(t.title)}`, ...(t.tags?.length ? { tags: t.tags } : {}), publishedAt: at,
   });
   THREAD[t.id] = uri;

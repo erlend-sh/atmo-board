@@ -16,7 +16,7 @@
           "subject": {
             "type": "string",
             "format": "at-uri",
-            "description": "The community.lexicon.thread.container or community.lexicon.thread.post being recommended."
+            "description": "The community.lexicon.thread.thread or community.lexicon.thread.post being recommended."
           },
           "direction": {
             "type": "string",

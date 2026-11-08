@@ -47,7 +47,7 @@ The mock also answers the few standard methods a client needs: `app.bsky.actor.g
 It does what the Atmospheric Threads README asks of an indexer, computed on every read:
 
 - **Overrides** count only when written by the repo that owns the subject's group, and the newest per subject and action wins. `until` lapses. Hidden threads and posts drop out unless the viewer is staff, who see them with `state.hidden`.
-- **Opening post**: the container author's first post in it with no `replyTo`. **Excerpt**: the description, or the OP's first 300 graphemes and 3 paragraphs.
+- **Opening post**: the thread author's first post in it with no `replyTo`. **Excerpt**: the description, or the OP's first 300 graphemes and 3 paragraphs.
 - **Counts**: `postCount` and `replyCount` skip hidden posts. `posters` is the OP's author, then the most recent posters, up to 5. `lastPostAt` is the newest post.
 - **Votes**: one per person per subject, the newest counts, `down` subtracts. **Reactions**: one per person per emoji.
 - **Subscriptions**: the most specific one wins, so a thread inherits `notify` from its channel and then the group.

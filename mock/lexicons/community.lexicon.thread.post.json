@@ -17,7 +17,7 @@
           "thread": {
             "type": "string",
             "format": "at-uri",
-            "description": "The root this post belongs to (the root in Bluesky, Barazo and Coves terms): a community.lexicon.thread.container, or any site.standard.document when the post is a comment on an article."
+            "description": "The root this post belongs to (the root in Bluesky, Barazo and Coves terms): a community.lexicon.thread.thread, or any site.standard.document when the post is a comment on an article."
           },
           "replyTo": {
             "type": "string",

@@ -90,10 +90,10 @@ test('writes: start a thread with its OP in one applyWrites, reply, react, vote,
   const parent = g.channels.find((c) => c.thread.record.title === 'Discussion').thread.uri;
   const bob = api.signIn('bob.example');
   const rkey = api.tid(), now = new Date().toISOString();
-  const uri = `at://${bob}/${T('container')}/${rkey}`;
+  const uri = `at://${bob}/${T('thread')}/${rkey}`;
   const { results } = await api.call('com.atproto.repo.applyWrites', {}, {
     repo: bob, writes: [
-      { $type: 'com.atproto.repo.applyWrites#create', collection: T('container'), rkey, value: { $type: T('container'), group: api.group, parent, title: 'Hello from the mock', publishedAt: now } },
+      { $type: 'com.atproto.repo.applyWrites#create', collection: T('thread'), rkey, value: { $type: T('thread'), group: api.group, parent, title: 'Hello from the mock', publishedAt: now } },
       { $type: 'com.atproto.repo.applyWrites#create', collection: T('post'), value: { $type: T('post'), thread: uri, textContent: 'First!', createdAt: now } },
     ],
   });

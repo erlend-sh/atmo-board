@@ -4,14 +4,14 @@
   "defs": {
     "main": {
       "type": "query",
-      "description": "Threads for a board. With parent, the threads directly under that container, pinned first. With group alone, every thread in the group that isn't a featured channel (the Latest page). Hidden threads are left out unless the viewer is staff.",
+      "description": "Threads for a board. With parent, the threads directly under that thread, pinned first. With group alone, every thread in the group that isn't a featured channel (the Latest page). Hidden threads are left out unless the viewer is staff.",
       "parameters": {
         "type": "params",
         "properties": {
           "parent": {
             "type": "string",
             "format": "at-uri",
-            "description": "List the child threads of this container."
+            "description": "List the child threads of this thread."
           },
           "group": {
             "type": "string",

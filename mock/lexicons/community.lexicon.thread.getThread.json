@@ -14,7 +14,7 @@
           "thread": {
             "type": "string",
             "format": "at-uri",
-            "description": "The container (or article) whose posts to return."
+            "description": "The thread (or article) whose posts to return."
           },
           "order": {
             "type": "string",

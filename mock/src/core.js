@@ -9,7 +9,7 @@
 
 export const NS = 'community.lexicon.thread';
 const C = {
-  group: `${NS}.group`, container: `${NS}.container`, post: `${NS}.post`, channel: `${NS}.channel`,
+  group: `${NS}.group`, thread: `${NS}.thread`, post: `${NS}.post`, channel: `${NS}.channel`,
   override: `${NS}.override`, subscription: `${NS}.subscription`, recommend: `${NS}.recommend`,
   reaction: `${NS}.reaction`, profile: 'app.bsky.actor.profile',
 };
@@ -210,7 +210,7 @@ export function createMockApi({ fixtures, lexicons = [], shiftTime = true, clock
   function index() {
     if (idx) return idx;
     const now = clock();
-    const containers = new Map([...all(C.container)].map((e) => [e.uri, e]));
+    const containers = new Map([...all(C.thread)].map((e) => [e.uri, e]));
     const groupOwner = (g) => parseUri(g)?.repo;
     const groupOf = (uri) => containers.get(uri)?.value.group ?? get(uri)?.value.site; // container, or an article's publication
 
@@ -219,7 +219,7 @@ export function createMockApi({ fixtures, lexicons = [], shiftTime = true, clock
     const ov = new Map(); // subject -> { pair: record }
     const subjectGroup = (subj) => {
       const s = get(subj); if (!s) return null;
-      if (s.uri.includes(`/${C.container}/`)) return s.value.group;
+      if (s.uri.includes(`/${C.thread}/`)) return s.value.group;
       if (s.uri.includes(`/${C.post}/`)) return groupOf(s.value.thread);
       return null;
     };
@@ -477,7 +477,7 @@ export function createMockApi({ fixtures, lexicons = [], shiftTime = true, clock
     validate.record(collection, value);
     if (isStaff(viewer)) return;
     const I = index();
-    const target = collection === C.post ? value.thread : collection === C.container ? value.parent : null;
+    const target = collection === C.post ? value.thread : collection === C.thread ? value.parent : null;
     if (target && I.state(target).locked) throw new XRPCError(400, 'Locked', 'This thread is locked: only staff can post in it');
     if (collection === C.override || collection === C.channel) throw new XRPCError(403, 'Forbidden', 'Only staff can write overrides and channels');
   }

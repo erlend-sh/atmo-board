@@ -108,7 +108,7 @@
         },
         "description": {
           "type": "string",
-          "description": "The .channel's description, else the container's."
+          "description": "The .channel's description, else the thread's."
         },
         "thread": {
           "type": "ref",
