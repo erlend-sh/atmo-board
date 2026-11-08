@@ -1,0 +1,69 @@
+{
+  "lexicon": 1,
+  "id": "garden.msg.group",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "description": "A group (space) whose content is threads, such as a forum, a chat server or a community space. It plays the part a site.standard.publication plays for articles. Forked from site.standard.publication with the same fields, so a group can be served by any app that reads threads. Threads point at it with their group field.",
+      "record": {
+        "type": "object",
+        "required": [
+          "url",
+          "name"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Base URL of the group's own site. A thread's canonical URL is this plus the thread's path."
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 5000,
+            "maxGraphemes": 500
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 30000,
+            "maxGraphemes": 3000
+          },
+          "icon": {
+            "type": "blob",
+            "accept": [
+              "image/*"
+            ],
+            "maxSize": 1000000,
+            "description": "Square image to identify the group. Should be at least 256x256."
+          },
+          "basicTheme": {
+            "type": "ref",
+            "ref": "site.standard.theme.basic",
+            "description": "Reuses standard.site's theme record unchanged."
+          },
+          "labels": {
+            "type": "union",
+            "refs": [
+              "com.atproto.label.defs#selfLabels"
+            ],
+            "description": "Self-label values. Effectively content warnings."
+          },
+          "preferences": {
+            "type": "ref",
+            "ref": "#preferences"
+          }
+        }
+      }
+    },
+    "preferences": {
+      "type": "object",
+      "properties": {
+        "showInDiscover": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether the group should appear in thread discovery feeds."
+        }
+      }
+    }
+  }
+}

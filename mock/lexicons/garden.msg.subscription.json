@@ -1,0 +1,43 @@
+{
+  "lexicon": 1,
+  "id": "garden.msg.subscription",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "description": "Joining a group, or following one thread within it. Forked from site.standard.graph.subscription and made granular: group alone means joining the whole group (space), and adding thread narrows the subscription to that thread and everything nested under it (a channel, a forum thread, or an article's comments). Written by the subscriber. Unsubscribing deletes the record, and changing notify updates it in place.",
+      "record": {
+        "type": "object",
+        "required": [
+          "group",
+          "createdAt"
+        ],
+        "properties": {
+          "group": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "The garden.msg.group being joined, or a site.standard.publication when following comments on one of its articles."
+          },
+          "thread": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "Narrows the subscription to this garden.msg.thread and everything under it: its posts and its child threads, at any depth. To follow a channel, point at the channel's thread, not its garden.msg.channel record. Can also be a site.standard.document, to follow the comments on an article. Only counts when the thread belongs to the group."
+          },
+          "notify": {
+            "type": "string",
+            "knownValues": [
+              "posts",
+              "threads",
+              "none"
+            ],
+            "description": "What the subscriber wants to hear about. posts: every new post and thread in scope. threads: new threads only. none: follow without notifications, such as keeping a channel in the sidebar. Absent means threads for a whole group and posts for a thread. Apps choose how to deliver it (feed, badge, push or email)."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime"
+          }
+        }
+      }
+    }
+  }
+}

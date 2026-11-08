@@ -1,0 +1,52 @@
+{
+  "lexicon": 1,
+  "id": "garden.msg.channel",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "description": "A sidebar entry that features a top-level thread as a channel. Only counts when written by the repo that owns the garden.msg.group the thread belongs to. Deleting it demotes the thread back to a plain thread.",
+      "record": {
+        "type": "object",
+        "required": [
+          "thread",
+          "position",
+          "createdAt"
+        ],
+        "properties": {
+          "thread": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "The garden.msg.thread being featured."
+          },
+          "section": {
+            "type": "string",
+            "maxLength": 640,
+            "maxGraphemes": 64,
+            "description": "Sidebar heading the channel sits under. Absent means the default section."
+          },
+          "position": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Sort order within the section, lowest first."
+          },
+          "icon": {
+            "type": "string",
+            "maxLength": 64,
+            "maxGraphemes": 1,
+            "description": "A single emoji or character. Absent means the app's default channel icon."
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 3000,
+            "maxGraphemes": 300
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime"
+          }
+        }
+      }
+    }
+  }
+}

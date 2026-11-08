@@ -1,0 +1,271 @@
+{
+  "lexicon": 1,
+  "id": "garden.msg.defs",
+  "defs": {
+    "link": {
+      "type": "object",
+      "required": [
+        "post"
+      ],
+      "description": "Goes in a site.standard.document's links union to say the document is also published as a post, usually a thread's opening post. The pair only counts when both records are in the same repo and point at each other.",
+      "properties": {
+        "post": {
+          "type": "string",
+          "format": "at-uri",
+          "description": "The garden.msg.post that is the same piece of writing. Replies are the other posts in its thread."
+        }
+      }
+    },
+    "markdown": {
+      "type": "object",
+      "required": [
+        "text"
+      ],
+      "description": "The starter shared rich format for a post's content: CommonMark source. Readers that can't render markdown fall back to the post's textContent.",
+      "properties": {
+        "text": {
+          "type": "string",
+          "maxLength": 1000000,
+          "maxGraphemes": 100000,
+          "description": "CommonMark markdown. Raw HTML should not be rendered."
+        }
+      }
+    },
+    "threadView": {
+      "type": "object",
+      "required": [
+        "uri",
+        "cid",
+        "author",
+        "record",
+        "postCount",
+        "indexedAt"
+      ],
+      "description": "A thread as an indexer serves it: the record with moderation applied, plus aggregates computed from posts in other people's repos. Not a record.",
+      "properties": {
+        "uri": {
+          "type": "string",
+          "format": "at-uri",
+          "description": "The garden.msg.thread."
+        },
+        "cid": {
+          "type": "string",
+          "format": "cid"
+        },
+        "author": {
+          "type": "string",
+          "format": "did",
+          "description": "The thread's author (the repo DID). Clients resolve handles and profiles themselves."
+        },
+        "record": {
+          "type": "unknown",
+          "description": "The thread record as written."
+        },
+        "title": {
+          "type": "string",
+          "description": "The effective title, after any rename override. Absent means the record's own title."
+        },
+        "parent": {
+          "type": "string",
+          "format": "at-uri",
+          "description": "The effective parent, after any move override."
+        },
+        "opening": {
+          "type": "string",
+          "format": "at-uri",
+          "description": "The opening post, if there is one."
+        },
+        "excerpt": {
+          "type": "string",
+          "maxGraphemes": 300,
+          "description": "The thread's description, or the start of the opening post's textContent when there is none."
+        },
+        "postCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Posts in the thread, the opening post included, hidden posts excluded."
+        },
+        "posters": {
+          "type": "array",
+          "maxLength": 5,
+          "items": {
+            "type": "string",
+            "format": "did"
+          },
+          "description": "The most active or most recent posters, for the avatar stack."
+        },
+        "lastPostAt": {
+          "type": "string",
+          "format": "datetime",
+          "description": "createdAt of the newest post. The board's activity column."
+        },
+        "score": {
+          "type": "integer",
+          "description": "Up recommends minus down recommends."
+        },
+        "state": {
+          "type": "ref",
+          "ref": "#moderationState"
+        },
+        "indexedAt": {
+          "type": "string",
+          "format": "datetime"
+        },
+        "viewer": {
+          "type": "ref",
+          "ref": "#viewerState"
+        }
+      }
+    },
+    "postView": {
+      "type": "object",
+      "required": [
+        "uri",
+        "cid",
+        "author",
+        "record",
+        "indexedAt"
+      ],
+      "description": "A post as an indexer serves it: the record plus its tallies. Not a record.",
+      "properties": {
+        "uri": {
+          "type": "string",
+          "format": "at-uri",
+          "description": "The garden.msg.post."
+        },
+        "cid": {
+          "type": "string",
+          "format": "cid"
+        },
+        "author": {
+          "type": "string",
+          "format": "did"
+        },
+        "record": {
+          "type": "unknown",
+          "description": "The post record as written."
+        },
+        "replyCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Posts whose replyTo is this post."
+        },
+        "score": {
+          "type": "integer",
+          "description": "Up recommends minus down recommends."
+        },
+        "reactions": {
+          "type": "array",
+          "items": {
+            "type": "ref",
+            "ref": "#reactionCount"
+          }
+        },
+        "state": {
+          "type": "ref",
+          "ref": "#moderationState"
+        },
+        "indexedAt": {
+          "type": "string",
+          "format": "datetime"
+        },
+        "viewer": {
+          "type": "ref",
+          "ref": "#viewerState"
+        }
+      }
+    },
+    "reactionCount": {
+      "type": "object",
+      "required": [
+        "emoji",
+        "count"
+      ],
+      "properties": {
+        "emoji": {
+          "type": "string",
+          "maxGraphemes": 1
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "moderationState": {
+      "type": "object",
+      "description": "The group's overrides in effect on the subject.",
+      "properties": {
+        "hidden": {
+          "type": "boolean"
+        },
+        "locked": {
+          "type": "boolean"
+        },
+        "pinnedUntil": {
+          "type": "string",
+          "format": "datetime",
+          "description": "Present when pinned. A far-future date means pinned with no end."
+        }
+      }
+    },
+    "viewerState": {
+      "type": "object",
+      "description": "The signed-in viewer's own records about the subject, so a client can show and undo them. Absent when nobody is signed in.",
+      "properties": {
+        "recommend": {
+          "type": "string",
+          "format": "at-uri",
+          "description": "The viewer's .recommend of the subject."
+        },
+        "direction": {
+          "type": "string",
+          "knownValues": [
+            "up",
+            "down"
+          ],
+          "description": "That recommend's direction."
+        },
+        "reactions": {
+          "type": "array",
+          "items": {
+            "type": "ref",
+            "ref": "#viewerReaction"
+          },
+          "description": "The viewer's .reaction records on the subject."
+        },
+        "subscription": {
+          "type": "string",
+          "format": "at-uri",
+          "description": "For a thread: the viewer's .subscription whose thread is this one, if any."
+        },
+        "notify": {
+          "type": "string",
+          "knownValues": [
+            "posts",
+            "threads",
+            "none"
+          ],
+          "description": "That subscription's notify, or the effective one inherited from a broader subscription."
+        }
+      }
+    },
+    "viewerReaction": {
+      "type": "object",
+      "required": [
+        "emoji",
+        "uri"
+      ],
+      "properties": {
+        "emoji": {
+          "type": "string",
+          "maxGraphemes": 1
+        },
+        "uri": {
+          "type": "string",
+          "format": "at-uri"
+        }
+      }
+    }
+  }
+}

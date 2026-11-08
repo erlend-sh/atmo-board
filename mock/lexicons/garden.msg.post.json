@@ -1,0 +1,66 @@
+{
+  "lexicon": 1,
+  "id": "garden.msg.post",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "description": "A post in a thread: a thread's opening post, a chat message, a forum reply or a comment on an article alike. Written by its author. A thread's opening post (OP) is its author's first post in it that answers no other post. A channel's untitled chat is the posts whose thread is the channel's own thread record.",
+      "record": {
+        "type": "object",
+        "required": [
+          "thread",
+          "textContent",
+          "createdAt"
+        ],
+        "properties": {
+          "thread": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "The root this post belongs to (the root in Bluesky, Barazo and Coves terms): a garden.msg.thread, or any site.standard.document when the post is a comment on an article."
+          },
+          "replyTo": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "The post this one answers (the parent in Bluesky, Barazo and Coves terms). Absent on a top-level post, where those lexicons set parent to the root. Apps may show replies flat (forum, chat) or nested (comments), and can rebuild the tree from thread plus replyTo."
+          },
+          "document": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "A site.standard.document that is the same piece of writing, such as a thread's opening post that is also a blog post, or a long reply republished as an article. Only counts when the document is in the same repo and links back with garden.msg.defs#link."
+          },
+          "textContent": {
+            "type": "string",
+            "maxLength": 1000000,
+            "maxGraphemes": 100000,
+            "description": "Plain-text rendering of the post. Required, so every reader can show every post. Should not contain markdown or other formatting."
+          },
+          "content": {
+            "type": "union",
+            "refs": [
+              "garden.msg.defs#markdown"
+            ],
+            "closed": false,
+            "description": "The post in a rich format. Open union: garden.msg.defs#markdown is the shared format every threads app should be able to read and write; apps may use their own formats, but should still write textContent."
+          },
+          "labels": {
+            "type": "union",
+            "refs": [
+              "com.atproto.label.defs#selfLabels"
+            ],
+            "description": "Self-label values. Effectively content warnings."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "datetime",
+            "description": "When the post was last edited."
+          }
+        }
+      }
+    }
+  }
+}

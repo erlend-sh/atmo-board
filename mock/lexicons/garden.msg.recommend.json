@@ -1,0 +1,37 @@
+{
+  "lexicon": 1,
+  "id": "garden.msg.recommend",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "description": "Recommending a thread or a post, like an upvote, or voting it down. Forked from site.standard.graph.recommend. One per author per subject: if there are several, the newest counts. Changing a vote updates the record in place, and withdrawing it deletes the record.",
+      "record": {
+        "type": "object",
+        "required": [
+          "subject",
+          "createdAt"
+        ],
+        "properties": {
+          "subject": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "The garden.msg.thread or garden.msg.post being recommended."
+          },
+          "direction": {
+            "type": "string",
+            "knownValues": [
+              "up",
+              "down"
+            ],
+            "description": "up recommends the subject, down votes it down. Absent means up, so a plain recommend stays a standard.site-style recommend. Apps that don't rank by votes may ignore down votes."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime"
+          }
+        }
+      }
+    }
+  }
+}

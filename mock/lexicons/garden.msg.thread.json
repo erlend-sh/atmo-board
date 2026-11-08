@@ -1,0 +1,74 @@
+{
+  "lexicon": 1,
+  "id": "garden.msg.thread",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "description": "A titled discussion thread, such as a forum thread or a chat channel. Written by its author. Forked from site.standard.document, but only as a container: it holds the title and where the thread lives, and has no body. Every message in it is a garden.msg.post, including the opening post (OP), which is the thread author's first post in it that answers no other post. A thread can have no OP, such as a channel whose chat is just its posts.",
+      "record": {
+        "type": "object",
+        "required": [
+          "group",
+          "title",
+          "publishedAt"
+        ],
+        "properties": {
+          "group": {
+            "type": "string",
+            "format": "uri",
+            "description": "The group the thread belongs to: a garden.msg.group (at://), or the group's URL (https://) for a loose thread."
+          },
+          "path": {
+            "type": "string",
+            "description": "Combine with the publication url to build the thread's canonical URL. Starts with a slash."
+          },
+          "parent": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "The thread this one lives in, such as the channel a forum thread was posted to. Absent for a top-level thread, which a forum can feature as a channel with garden.msg.channel."
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 5000,
+            "maxGraphemes": 500,
+            "description": "Same limits as site.standard.document#title."
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 30000,
+            "maxGraphemes": 3000,
+            "description": "A short summary written by the author. When it's absent, clients show the start of the opening post's textContent instead: up to 300 characters and at most 3 paragraphs."
+          },
+          "tags": {
+            "type": "array",
+            "maxLength": 100,
+            "items": {
+              "type": "string",
+              "maxLength": 1280,
+              "maxGraphemes": 128
+            },
+            "description": "Avoid prepending tags with hashtags."
+          },
+          "labels": {
+            "type": "union",
+            "refs": [
+              "com.atproto.label.defs#selfLabels"
+            ],
+            "description": "Self-label values. Effectively content warnings."
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "datetime",
+            "description": "When the thread was started."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "datetime",
+            "description": "When the author last edited the title or description. Not the time of the latest post, which indexers derive from posts."
+          }
+        }
+      }
+    }
+  }
+}

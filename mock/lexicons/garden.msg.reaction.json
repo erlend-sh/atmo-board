@@ -1,0 +1,41 @@
+{
+  "lexicon": 1,
+  "id": "garden.msg.reaction",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "tid",
+      "description": "An emoji reaction. Written by the reacting person. Unlike a recommend, someone can leave several reactions on the same subject, one per emoji. A like is a reaction with ❤️. The subject can be any record, not only a post.",
+      "record": {
+        "type": "object",
+        "required": [
+          "subject",
+          "emoji",
+          "createdAt"
+        ],
+        "properties": {
+          "subject": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "What is being reacted to: usually a garden.msg.post or .thread, but any record works."
+          },
+          "cid": {
+            "type": "string",
+            "format": "cid",
+            "description": "Optional CID of the subject, pinning the reaction to one version of it."
+          },
+          "emoji": {
+            "type": "string",
+            "maxLength": 64,
+            "maxGraphemes": 1,
+            "description": "A single emoji (one grapheme)."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime"
+          }
+        }
+      }
+    }
+  }
+}
